@@ -1,0 +1,86 @@
+# =============================================================================
+# 1. OS & Global Cache Files
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =============================================================================
+# 2. Environment Variables & Credentials (CRITICAL: NEVER COMMIT)
+# =============================================================================
+.env
+.env.*
+!.env.example
+*.local
+application-local.yml
+application-local.properties
+
+# =============================================================================
+# 3. Root & Multi-Editor Configs
+# =============================================================================
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =============================================================================
+# 4. Backend (Spring Boot / Maven / Java)
+# =============================================================================
+backend/HELP.md
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/*.log
+backend/logs/
+
+# Java Tooling Artifacts
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings/
+backend/.springBeans
+backend/.sts4-cache
+backend/nbproject/private/
+backend/nbbuild/
+backend/dist/
+backend/nbdist/
+backend/.nb-gradle/
+backend/build/
+
+# =============================================================================
+# 5. Frontend (Vue 3 / Vite / Node)
+# =============================================================================
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/coverage/
+frontend/.eslintcache
+frontend/*.tsbuildinfo
+frontend/.vite/
+
+# Frontend Logs
+frontend/logs/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Test Artifacts
+frontend/cypress/videos/
+frontend/cypress/screenshots/
+frontend/__screenshots__/
+frontend/*.timestamp-*-*.mjs
