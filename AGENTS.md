@@ -46,10 +46,10 @@ Karena itu, ikuti aturan berikut setiap kali membantu:
 
 Isi/update bagian ini secara manual sesuai progres nyata:
 
-- [ ] Setup project skeleton (BE + FE)
+- [x] Setup project skeleton (BE + FE)
 - [ ] Auth (JWT + RBAC)
 - [ ] Modul Employee
-- [ ] Modul Organization (Department/Position)
+- [x] Modul Organization (Department & Position Backend & Frontend CRUD selesai)
 - [ ] Modul Attendance
 - [ ] Modul Leave Management
 - [ ] Modul Performance Review

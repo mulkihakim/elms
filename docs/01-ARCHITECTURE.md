@@ -62,9 +62,25 @@ Jangan taruh business logic di Controller atau Repository.
     }
   }
   ```
+  Khusus validation error, ditambah `details` per field:
+  ```json
+  {
+    "success": false,
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request body contains invalid fields",
+      "details": {
+        "name": "must not be blank",
+        "email": "must be a valid email address"
+      }
+    }
+  }
+  ```
 - HTTP status code dipakai secara konsisten: `200` OK, `201` Created, `400`
-  Validation error, `401` Unauthenticated, `403` Forbidden (role tidak sesuai),
-  `404` Not Found, `409` Conflict (mis. status transition tidak valid).
+  Validation error / bad request, `401` Unauthenticated, `403` Forbidden (role
+  tidak sesuai), `404` Not Found, `405` Method Not Allowed, `409` Conflict
+  (mis. status transition tidak valid / duplicate), `422` Unprocessable Entity
+  (mis. leave balance tidak cukup).
 - Pagination pakai query param `?page=0&size=20&sort=createdAt,desc`.
 - Endpoint list mengembalikan struktur `Page<T>` Spring Data, jangan dibungkus manual.
 
@@ -81,11 +97,11 @@ POST   /api/v1/attendance/check-in
 POST   /api/v1/attendance/check-out
 GET    /api/v1/attendance?employeeId=&from=&to=
 
-POST   /api/v1/leaves
-GET    /api/v1/leaves/me
-GET    /api/v1/leaves/team          (manager)
-PATCH  /api/v1/leaves/{id}/approve
-PATCH  /api/v1/leaves/{id}/reject
+POST   /api/v1/leave-requests
+GET    /api/v1/leave-requests/me
+GET    /api/v1/leave-requests/team          (manager)
+PATCH  /api/v1/leave-requests/{id}/approve
+PATCH  /api/v1/leave-requests/{id}/reject
 
 POST   /api/v1/review-periods
 POST   /api/v1/reviews

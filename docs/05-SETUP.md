@@ -188,10 +188,49 @@ Tambahkan di baris paling atas file CSS utama (`src/assets/main.css` atau
 ```css
 @import "tailwindcss";
 ```
+### 3.3a Install PrimeVue (UI Component Library)
 
-Tailwind v4 **tidak lagi butuh** `tailwind.config.js` maupun `postcss.config.js`
-untuk kasus dasar — cukup plugin Vite di atas. Pastikan file CSS ini di-import
-di `main.js`.
+```bash
+npm install primevue @primevue/themes primeicons
+```
+
+Edit `main.js`:
+
+```js
+import { createApp } from 'vue'
+import PrimeVue from 'primevue/config'
+import Aura from '@primevue/themes/aura'
+import 'primeicons/primeicons.css'
+import App from './App.vue'
+
+const app = createApp(App)
+
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+  },
+})
+
+app.mount('#app')
+```
+
+**Pembagian tanggung jawab styling:**
+- **PrimeVue** → tampilan & perilaku komponen (button, table, dialog, form, chart)
+- **Tailwind** → layout di sekitar komponen (grid, spacing, sidebar, positioning)
+
+Jangan override styling internal komponen PrimeVue pakai class Tailwind — biarkan
+ikut tema Aura. Kalau warna/tampilan perlu disesuaikan, ubah lewat konfigurasi
+tema PrimeVue (lihat `06-UI-CONVENTIONS.md` §2a), bukan lewat Tailwind class di
+template.
+
+Import komponen satu per satu sesuai kebutuhan (bukan seluruh library sekaligus),
+misalnya:
+
+```js
+import Button from 'primevue/button'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+```
 
 ### 3.4 Buat `.env` untuk Base URL API
 

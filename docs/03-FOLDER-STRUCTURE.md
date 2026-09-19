@@ -13,7 +13,9 @@ src/main/java/com/elms/
 │   ├── exception/
 │   │   ├── GlobalExceptionHandler.java
 │   │   ├── ResourceNotFoundException.java
-│   │   └── InvalidStatusTransitionException.java
+│   │   ├── DuplicateResourceException.java
+│   │   ├── InvalidStatusTransitionException.java
+│   │   └── InsufficientLeaveBalanceException.java
 │   ├── response/
 │   │   └── ApiResponse.java
 │   └── config/
@@ -102,6 +104,9 @@ src/
 ├── router/
 │   ├── index.js
 │   └── guards.js              # role-based route guard
+|
+├── plugins/
+│   └── primevue.js            # registrasi PrimeVue, tema Aura, daftar komponen yang diimport
 │
 ├── views/                     # halaman, 1:1 dengan route
 │   ├── auth/LoginView.vue
@@ -124,6 +129,10 @@ src/
     ├── formatDate.js
     └── constants.js            # enum status, role, dsb — mirror dengan backend
 ```
+**Catatan PrimeVue:** komponen PrimeVue tidak diimport langsung di `views/`
+atau `components/`, hanya lewat `components/common/Base*.vue` (lihat
+`06-UI-CONVENTIONS.md` §3). Registrasi plugin & tema PrimeVue terpusat di
+`plugins/primevue.js`, diimport sekali di `main.js`.
 
 **Aturan penamaan Vue:**
 - Komponen: `PascalCase.vue` (`EmployeeCard.vue`)

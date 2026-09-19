@@ -19,7 +19,7 @@ ReviewPeriod 1───* PerformanceReview
 ### 2.1 Employee
 | Field | Tipe | Catatan |
 |---|---|---|
-| id | UUID / bigint | PK |
+| id | UUID | PK |
 | full_name | varchar | |
 | email | varchar, unique | dipakai juga untuk login |
 | phone | varchar | |

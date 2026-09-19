@@ -29,6 +29,7 @@
 | Peran | Contoh Tailwind class | Kapan dipakai |
 |---|---|---|
 | Primary | `bg-indigo-600` / `text-indigo-600` | tombol utama, link aktif, sidebar item aktif |
+| PrimeVue theme primary | preset Aura, token `primary` di-set ke `indigo` | supaya warna komponen PrimeVue (button, badge, dst senada dengan `bg-indigo-600` di atas |
 | Neutral | `bg-gray-50` (background), `text-gray-700` (teks), `border-gray-200` | background halaman, teks biasa, border |
 | Success | `bg-green-100 text-green-700` | status `APPROVED`, `ON_TIME` |
 | Warning | `bg-yellow-100 text-yellow-700` | status `PENDING`, `LATE` |
@@ -39,14 +40,25 @@ konsisten — jangan biarkan agent memilih warna baru tiap membuat halaman.
 
 ## 3. Komponen Dasar yang Dipakai Berulang
 
+Sejak [tanggal keputusan], komponen dasar dibangun sebagai **wrapper tipis di
+atas PrimeVue**, bukan dari HTML+Tailwind murni. Tujuannya: kalau suatu saat
+ganti library, cukup ubah wrapper-nya, bukan seluruh halaman yang memakainya.
+
 Buat sekali di `components/common/`, pakai di semua modul — jangan biarkan
 agent bikin versi baru tiap modul:
 
-- `BaseButton.vue` — variant: `primary`, `secondary`, `danger`
-- `BaseInput.vue` / `BaseSelect.vue` — dipakai di semua form (Employee, Leave, dst)
-- `BaseTable.vue` — dipakai di semua halaman list (Employee list, Attendance list, dst), minimal support kolom dinamis + slot untuk action button
-- `BaseModal.vue` — untuk konfirmasi delete, form cepat
-- `StatusBadge.vue` — render warna sesuai tabel status di atas (`PENDING` → kuning, dst), dipakai di Leave, Attendance, Employee status
+| Komponen project | Dibangun di atas (PrimeVue) | Catatan |
+|---|---|---|
+| `BaseButton.vue` | `Button` | variant: `primary`, `secondary`, `danger` → mapping ke `severity` PrimeVue |
+| `BaseInput.vue` | `InputText` | dipakai di semua form |
+| `BaseSelect.vue` | `Select` (dulu `Dropdown`) | dipakai di semua form |
+| `BaseTable.vue` | `DataTable` + `Column` | dipakai di semua halaman list, minimal support kolom dinamis + slot action button |
+| `BaseModal.vue` | `Dialog` | untuk konfirmasi delete, form cepat |
+| `StatusBadge.vue` | `Tag` | render warna sesuai tabel status di §2 (`PENDING` → kuning, dst) |
+
+Aturan: komponen halaman **tidak boleh** import komponen PrimeVue langsung
+(mis. `import Button from 'primevue/button'` di dalam `EmployeeListView.vue`).
+Selalu lewat `Base*.vue` di atas, supaya styling & behavior tetap sentral.
 
 ## 4. Pola Halaman List (dipakai di Employee, Department, Attendance, dst)
 
