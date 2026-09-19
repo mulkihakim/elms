@@ -48,7 +48,7 @@ Isi/update bagian ini secara manual sesuai progres nyata:
 
 - [x] Setup project skeleton (BE + FE)
 - [ ] Auth (JWT + RBAC)
-- [ ] Modul Employee
+- [x] Modul Employee (Backend & Frontend CRUD selesai)
 - [x] Modul Organization (Department & Position Backend & Frontend CRUD selesai)
 - [ ] Modul Attendance
 - [ ] Modul Leave Management

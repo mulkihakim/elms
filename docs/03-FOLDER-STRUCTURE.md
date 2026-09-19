@@ -18,10 +18,12 @@ src/main/java/com/elms/
 │   │   └── InsufficientLeaveBalanceException.java
 │   ├── response/
 │   │   └── ApiResponse.java
-│   └── config/
-│       ├── SecurityConfig.java
-│       ├── JwtConfig.java
-│       └── CorsConfig.java
+│   ├── config/
+│   │   ├── SecurityConfig.java
+│   │   ├── JwtConfig.java
+│   │   └── CorsConfig.java
+│   └── seeder/
+│       └── DataSeeder.java
 │
 ├── auth/
 │   ├── AuthController.java

@@ -42,7 +42,7 @@ const menuSections = computed(() => {
         items: [
           { name: 'Departemen', path: '/departments', icon: 'pi pi-building', active: true },
           { name: 'Posisi', path: '/positions', icon: 'pi pi-briefcase', active: true },
-          { name: 'Karyawan', path: '/employees', icon: 'pi pi-users', badge: 'Segera' },
+          { name: 'Karyawan', path: '/employees', icon: 'pi pi-users', active: true },
         ],
       },
       {

@@ -4,18 +4,21 @@ import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { usePositionStore } from '@/stores/positionStore'
+import { useEmployeeStore } from '@/stores/employeeStore'
 import BaseButton from '@/components/common/BaseButton.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 
 const authStore = useAuthStore()
 const departmentStore = useDepartmentStore()
 const positionStore = usePositionStore()
+const employeeStore = useEmployeeStore()
 
 onMounted(async () => {
   try {
     await Promise.all([
       departmentStore.fetchDepartments(0, 10),
       positionStore.fetchPositions(null, 0, 10),
+      employeeStore.fetchEmployees({}, 0, 10),
     ])
   } catch (e) {
     console.error('Error loading dashboard stats:', e)
@@ -83,16 +86,16 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- Card Karyawan (Placeholder status) -->
+      <!-- Card Karyawan -->
       <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Karyawan Aktif</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Karyawan</span>
           <div class="text-2xl font-bold text-slate-800 mt-1">
-            -
+            {{ employeeStore.totalElements }}
           </div>
-          <span class="text-xs text-slate-400 mt-2 inline-block">
-            Modul Employee Segera
-          </span>
+          <RouterLink to="/employees" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+            Lihat data &rarr;
+          </RouterLink>
         </div>
         <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
           <i class="pi pi-users"></i>
