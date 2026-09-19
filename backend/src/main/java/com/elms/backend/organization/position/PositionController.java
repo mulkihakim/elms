@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class PositionController {
     private final PositionService positionService;
 
     @PostMapping
+    @PreAuthorize("hasRole('HR')")
     public ResponseEntity<ApiResponse<PositionResponse>> createPosition(
             @Valid @RequestBody PositionRequest request) {
         PositionResponse response = positionService.createPosition(request);
@@ -43,6 +45,7 @@ public class PositionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('HR')")
     public ResponseEntity<ApiResponse<PositionResponse>> updatePosition(
             @PathVariable Long id,
             @Valid @RequestBody PositionRequest request) {
@@ -51,6 +54,7 @@ public class PositionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('HR')")
     public ResponseEntity<ApiResponse<Void>> deletePosition(@PathVariable Long id) {
         positionService.deletePosition(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Position deleted successfully"));

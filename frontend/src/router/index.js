@@ -1,12 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import { setupRouteGuards } from './guards'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/auth/LoginView.vue'),
+      meta: { guestOnly: true },
+    },
+    {
       path: '/',
       component: DefaultLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -21,26 +29,31 @@ const router = createRouter({
           path: 'departments',
           name: 'departments',
           component: () => import('@/views/organization/DepartmentListView.vue'),
+          meta: { roles: ['HR'] },
         },
         {
           path: 'positions',
           name: 'positions',
           component: () => import('@/views/organization/PositionListView.vue'),
+          meta: { roles: ['HR'] },
         },
         {
           path: 'employees',
           name: 'employees',
           component: () => import('@/views/employee/EmployeeListView.vue'),
+          meta: { roles: ['HR'] },
         },
         {
           path: 'employees/create',
           name: 'employee-create',
           component: () => import('@/views/employee/EmployeeFormView.vue'),
+          meta: { roles: ['HR'] },
         },
         {
           path: 'employees/:id/edit',
           name: 'employee-edit',
           component: () => import('@/views/employee/EmployeeFormView.vue'),
+          meta: { roles: ['HR'] },
         },
         {
           path: 'attendance',
@@ -65,5 +78,8 @@ const router = createRouter({
     },
   ],
 })
+
+// Pasang route guard untuk autentikasi dan RBAC
+setupRouteGuards(router)
 
 export default router

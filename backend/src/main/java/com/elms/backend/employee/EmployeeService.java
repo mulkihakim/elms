@@ -25,6 +25,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Transactional
     public EmployeeResponse createEmployee(EmployeeRequest request) {
@@ -55,7 +56,7 @@ public class EmployeeService {
                 .employmentStatus(request.getEmploymentStatus() != null ? request.getEmploymentStatus() : EmploymentStatus.ACTIVE)
                 .role(request.getRole() != null ? request.getRole() : Role.EMPLOYEE)
                 .leaveBalance(request.getLeaveBalance() != null ? request.getLeaveBalance() : 12)
-                .password(request.getPassword() != null && !request.getPassword().isBlank() ? request.getPassword() : "password123")
+                .password(passwordEncoder.encode(request.getPassword() != null && !request.getPassword().isBlank() ? request.getPassword() : "password123"))
                 .build();
 
         Employee saved = employeeRepository.save(employee);
@@ -131,7 +132,7 @@ public class EmployeeService {
             employee.setLeaveBalance(request.getLeaveBalance());
         }
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            employee.setPassword(request.getPassword());
+            employee.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
         Employee updated = employeeRepository.save(employee);

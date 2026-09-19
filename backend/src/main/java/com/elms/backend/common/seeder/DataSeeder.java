@@ -33,6 +33,7 @@ public class DataSeeder implements CommandLineRunner {
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
     private final EmployeeRepository employeeRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -142,6 +143,8 @@ public class DataSeeder implements CommandLineRunner {
             return;
         }
 
+        String defaultHashedPassword = passwordEncoder.encode("password123");
+
         // 1. HR Admin (Budi Santoso)
         employeeRepository.save(Employee.builder()
                 .fullName("Budi Santoso")
@@ -154,7 +157,7 @@ public class DataSeeder implements CommandLineRunner {
                 .employmentStatus(EmploymentStatus.ACTIVE)
                 .role(Role.HR)
                 .leaveBalance(12)
-                .password("password123")
+                .password(defaultHashedPassword)
                 .build());
 
         // 2. Engineering Manager (Siti Rahma)
@@ -169,7 +172,7 @@ public class DataSeeder implements CommandLineRunner {
                 .employmentStatus(EmploymentStatus.ACTIVE)
                 .role(Role.MANAGER)
                 .leaveBalance(12)
-                .password("password123")
+                .password(defaultHashedPassword)
                 .build());
 
         // 3. Staff Employee 1 (Ahmad Fauzi - supervised by Siti Rahma)
@@ -184,7 +187,7 @@ public class DataSeeder implements CommandLineRunner {
                 .employmentStatus(EmploymentStatus.ACTIVE)
                 .role(Role.EMPLOYEE)
                 .leaveBalance(12)
-                .password("password123")
+                .password(defaultHashedPassword)
                 .build());
 
         // 4. Staff Employee 2 (Dewi Lestari - supervised by Siti Rahma)
@@ -199,7 +202,7 @@ public class DataSeeder implements CommandLineRunner {
                 .employmentStatus(EmploymentStatus.ACTIVE)
                 .role(Role.EMPLOYEE)
                 .leaveBalance(10)
-                .password("password123")
+                .password(defaultHashedPassword)
                 .build());
 
         log.info("✅ {} employees seeded.", employeeRepository.count());

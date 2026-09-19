@@ -30,7 +30,10 @@ apiClient.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 401) {
         localStorage.removeItem('elms_token')
-        // Bisa redirect ke login jika route guard sudah siap
+        localStorage.removeItem('elms_user')
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
       }
       // Kembalikan payload error dari backend jika ada
       const backendError = error.response.data?.error || {

@@ -1,68 +1,90 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import authApi from '@/api/authApi'
 
 export const useAuthStore = defineStore('auth', () => {
-  // Mock user default (HR) agar semua menu master data dapat diakses langsung
-  const user = ref({
-    name: 'Budi Santoso',
-    email: 'budi.hr@elms.com',
-    role: 'HR', // HR | MANAGER | EMPLOYEE
-  })
+  const token = ref(localStorage.getItem('elms_token') || null)
 
-  const token = ref(localStorage.getItem('elms_token') || 'mock-dev-token')
+  let savedUser = null
+  try {
+    const rawUser = localStorage.getItem('elms_user')
+    if (rawUser) {
+      savedUser = JSON.parse(rawUser)
+    }
+  } catch {
+    savedUser = null
+  }
+  const user = ref(savedUser)
+  const isLoading = ref(false)
+  const error = ref(null)
 
-  const availableRoles = ['HR', 'MANAGER', 'EMPLOYEE']
-
-  const currentRole = computed(() => user.value?.role || 'HR')
+  const isAuthenticated = computed(() => !!token.value && !!user.value)
+  const currentRole = computed(() => user.value?.role || null)
   const isHR = computed(() => currentRole.value === 'HR')
   const isManager = computed(() => currentRole.value === 'MANAGER')
   const isEmployee = computed(() => currentRole.value === 'EMPLOYEE')
 
   /**
-   * Mengubah role aktif (berguna untuk demo/testing navigasi per role)
+   * Melakukan login dengan email dan password
+   * @param {{ email: string, password: string }} credentials
    */
-  function setRole(role) {
-    if (!availableRoles.includes(role)) return
-
-    let name = 'Budi Santoso'
-    let email = 'budi.hr@elms.com'
-
-    if (role === 'MANAGER') {
-      name = 'Siti Rahma (Engineering Manager)'
-      email = 'siti.manager@elms.com'
-    } else if (role === 'EMPLOYEE') {
-      name = 'Ahmad Fauzi (Software Engineer)'
-      email = 'ahmad.emp@elms.com'
-    }
-
-    user.value = {
-      name,
-      email,
-      role,
+  async function login(credentials) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const data = await authApi.login(credentials)
+      token.value = data.accessToken
+      user.value = data.user
+      localStorage.setItem('elms_token', data.accessToken)
+      localStorage.setItem('elms_user', JSON.stringify(data.user))
+      return data
+    } catch (err) {
+      error.value = err.message || 'Login gagal. Periksa kembali email dan password.'
+      throw err
+    } finally {
+      isLoading.value = false
     }
   }
 
-  function setUser(newUser) {
-    user.value = newUser
+  /**
+   * Mengambil data profil user terbaru dari backend
+   */
+  async function fetchCurrentUser() {
+    if (!token.value) return null
+    try {
+      const profile = await authApi.getMe()
+      user.value = profile
+      localStorage.setItem('elms_user', JSON.stringify(profile))
+      return profile
+    } catch (err) {
+      logout()
+      throw err
+    }
   }
 
+  /**
+   * Logout dan membersihkan session
+   */
   function logout() {
     token.value = null
-    localStorage.removeItem('elms_token')
-    // Reset ke default
     user.value = null
+    error.value = null
+    localStorage.removeItem('elms_token')
+    localStorage.removeItem('elms_user')
   }
 
   return {
     user,
     token,
-    availableRoles,
+    isLoading,
+    error,
+    isAuthenticated,
     currentRole,
     isHR,
     isManager,
     isEmployee,
-    setRole,
-    setUser,
+    login,
+    fetchCurrentUser,
     logout,
   }
 })

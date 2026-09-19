@@ -40,7 +40,29 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InsufficientLeaveBalanceException.class)
     public ResponseEntity<ApiResponse<Void>> handleInsufficientLeaveBalance(InsufficientLeaveBalanceException ex) {
-        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, "INSUFFICIENT_LEAVE_BALANCE", ex.getMessage());
+        return buildResponse(HttpStatus.UNPROCESSABLE_CONTENT, "INSUFFICIENT_LEAVE_BALANCE", ex.getMessage());
+    }
+
+    // ── Security Exceptions ──────────────────────────────────────────
+
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentials(org.springframework.security.authentication.BadCredentialsException ex) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "BAD_CREDENTIALS", "Invalid email or password");
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.DisabledException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDisabled(org.springframework.security.authentication.DisabledException ex) {
+        return buildResponse(HttpStatus.FORBIDDEN, "ACCOUNT_DISABLED", "Account is disabled or inactive");
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex) {
+        return buildResponse(HttpStatus.FORBIDDEN, "FORBIDDEN", "You do not have permission to access this resource");
+    }
+
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(org.springframework.security.core.AuthenticationException ex) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", ex.getMessage());
     }
 
     // ── Validation & Request Errors (4xx) ────────────────────────────
