@@ -63,6 +63,17 @@ public class EmployeeController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @GetMapping("/team")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getMyTeamMembers(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new org.springframework.security.access.AccessDeniedException("User not authenticated");
+        }
+        List<EmployeeResponse> response = employeeService.getMyTeamMembers(userDetails.getId());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(@PathVariable UUID id) {
         EmployeeResponse response = employeeService.getEmployeeById(id);

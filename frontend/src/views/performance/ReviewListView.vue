@@ -41,14 +41,14 @@ const periodOptions = computed(() => [
 
 // Ambil anggota tim bawahan (hanya untuk Manager)
 const teamMembers = computed(() => {
-  return employeeStore.employees.filter((e) => e.managerId === authStore.user?.id)
+  return employeeStore.teamMembers
 })
 
 onMounted(async () => {
   await performanceStore.fetchPeriods()
   if (authStore.isManager) {
-    // Ambil karyawan untuk dropdown penilai
-    await employeeStore.fetchEmployees({ page: 0, size: 100 })
+    // Ambil anggota tim langsung untuk dropdown penilai
+    await employeeStore.fetchTeamMembers()
   }
   loadReviews()
 })
@@ -74,8 +74,11 @@ async function loadReviews() {
   }
 }
 
-function openCreateModal() {
+async function openCreateModal() {
   selectedReviewForEdit.value = null
+  if (employeeStore.teamMembers.length === 0) {
+    await employeeStore.fetchTeamMembers()
+  }
   isModalOpen.value = true
 }
 

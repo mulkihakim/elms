@@ -5,6 +5,7 @@ import employeeApi from '@/api/employeeApi'
 export const useEmployeeStore = defineStore('employee', () => {
   const employees = ref([])
   const activeEmployees = ref([])
+  const teamMembers = ref([])
   const totalElements = ref(0)
   const totalPages = ref(0)
   const currentPage = ref(0)
@@ -64,6 +65,25 @@ export const useEmployeeStore = defineStore('employee', () => {
     } catch (err) {
       console.error('Failed to fetch active employees:', err)
       return []
+    }
+  }
+
+  /**
+   * Mengambil anggota tim bawahan langsung dari manager yang login
+   */
+  async function fetchTeamMembers() {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await employeeApi.getTeamMembers()
+      teamMembers.value = response.data || []
+      return teamMembers.value
+    } catch (err) {
+      error.value = err.message || 'Gagal memuat anggota tim'
+      console.error('Failed to fetch team members:', err)
+      return []
+    } finally {
+      loading.value = false
     }
   }
 
@@ -174,6 +194,7 @@ export const useEmployeeStore = defineStore('employee', () => {
   return {
     employees,
     activeEmployees,
+    teamMembers,
     totalElements,
     totalPages,
     currentPage,
@@ -182,6 +203,7 @@ export const useEmployeeStore = defineStore('employee', () => {
     error,
     fetchEmployees,
     fetchActiveEmployees,
+    fetchTeamMembers,
     getEmployeeById,
     getMyProfile,
     createEmployee,

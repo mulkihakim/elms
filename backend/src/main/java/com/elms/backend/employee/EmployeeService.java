@@ -88,6 +88,13 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
+    public List<EmployeeResponse> getMyTeamMembers(UUID managerId) {
+        return employeeRepository.findByManagerIdAndEmploymentStatus(managerId, EmploymentStatus.ACTIVE).stream()
+                .map(EmployeeResponse::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeById(UUID id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));

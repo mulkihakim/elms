@@ -17,6 +17,13 @@ export const employeeApi = {
   },
 
   /**
+   * Mengambil anggota tim bawahan langsung dari manajer yang login
+   */
+  getTeamMembers() {
+    return apiClient.get('/employees/team')
+  },
+
+  /**
    * Mengambil detail karyawan berdasarkan UUID
    * @param {string} id UUID
    */
