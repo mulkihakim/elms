@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useToast } from 'primevue/usetoast'
+import { useNotify } from '@/composables/useNotify'
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import BaseButton from '@/components/common/BaseButton.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 
 const attendanceStore = useAttendanceStore()
-const toast = useToast()
+const notify = useNotify()
 
 const currentTime = ref('')
 const currentDate = ref('')
@@ -72,40 +72,23 @@ const formattedDuration = computed(() => {
 async function handleCheckIn() {
   try {
     await attendanceStore.checkIn(checkInNotes.value)
-    toast.add({
-      severity: 'success',
-      summary: 'Check-in Berhasil',
-      detail: 'Kehadiran Anda hari ini telah dicatat.',
-      life: 3000,
-    })
+    notify.showSuccess('Kehadiran Anda hari ini telah dicatat.', 'Check-in Berhasil')
     showNotesInput.value = false
     checkInNotes.value = ''
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Check-in',
-      detail: err.message || 'Terjadi kesalahan saat check-in',
-      life: 4000,
-    })
+    notify.showError(err.message || 'Terjadi kesalahan saat check-in', 'Gagal Check-in')
   }
 }
 
 async function handleCheckOut() {
   try {
     await attendanceStore.checkOut()
-    toast.add({
-      severity: 'success',
-      summary: 'Check-out Berhasil',
-      detail: 'Jam kepulangan dan total durasi kerja telah tercatat.',
-      life: 3000,
-    })
+    notify.showSuccess(
+      'Jam kepulangan dan total durasi kerja telah tercatat.',
+      'Check-out Berhasil',
+    )
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Check-out',
-      detail: err.message || 'Terjadi kesalahan saat check-out',
-      life: 4000,
-    })
+    notify.showError(err.message || 'Terjadi kesalahan saat check-out', 'Gagal Check-out')
   }
 }
 </script>
@@ -115,12 +98,15 @@ async function handleCheckOut() {
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
       <!-- Sisi Kiri: Jam Digital & Tanggal -->
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+        <div
+          class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0"
+        >
           <i class="pi pi-clock text-2xl"></i>
         </div>
         <div>
           <div class="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
-            {{ currentTime }} <span class="text-xs font-semibold text-slate-400 font-sans">WIB</span>
+            {{ currentTime }}
+            <span class="text-xs font-semibold text-slate-400 font-sans">WIB</span>
           </div>
           <div class="text-xs text-slate-500 font-medium capitalize mt-0.5">
             {{ currentDate }}
@@ -165,7 +151,9 @@ async function handleCheckOut() {
 
         <!-- Kondisi 2: Sudah Check-in, Belum Check-out -->
         <div v-else-if="!isCheckedOut" class="flex flex-wrap items-center gap-4">
-          <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl">
+          <div
+            class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl"
+          >
             <div>
               <div class="text-[10px] uppercase font-bold text-slate-400">Masuk</div>
               <div class="text-sm font-bold text-slate-800">{{ checkInTimeFormatted }} WIB</div>
@@ -193,7 +181,10 @@ async function handleCheckOut() {
         </div>
 
         <!-- Kondisi 3: Sudah Selesai Check-in & Check-out -->
-        <div v-else class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl">
+        <div
+          v-else
+          class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl"
+        >
           <div>
             <div class="text-[10px] uppercase font-bold text-slate-400">Masuk</div>
             <div class="text-sm font-bold text-slate-800">{{ checkInTimeFormatted }}</div>
@@ -210,7 +201,9 @@ async function handleCheckOut() {
           </div>
           <div class="h-6 w-px bg-slate-200"></div>
           <StatusBadge :status="todayStatus?.status" />
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          <span
+            class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200"
+          >
             Selesai
           </span>
         </div>

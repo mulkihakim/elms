@@ -1,8 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterView } from 'vue-router'
-import Toast from 'primevue/toast'
-import ConfirmDialog from 'primevue/confirmdialog'
+import AppConfirmDialog from '@/components/common/AppConfirmDialog.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 
@@ -19,20 +18,19 @@ function closeSidebar() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex flex-col text-slate-800">
-    <!-- Toast & ConfirmDialog Global Provider -->
-    <Toast position="top-right" />
-    <ConfirmDialog />
+  <div class="h-screen bg-slate-50 flex flex-col text-slate-800 overflow-hidden">
+    <!-- ConfirmDialog Global Provider -->
+    <AppConfirmDialog />
 
     <!-- Topbar Header -->
     <AppHeader :sidebar-open="sidebarOpen" @toggle-sidebar="toggleSidebar" />
 
     <!-- Body Layout: Sidebar + Main Content -->
-    <div class="flex-1 flex overflow-hidden">
+    <div class="flex-1 flex min-h-0 overflow-hidden">
       <AppSidebar :is-open="sidebarOpen" @close="closeSidebar" />
 
       <!-- Main Content Area -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      <main class="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8">
         <div class="max-w-7xl mx-auto">
           <RouterView />
         </div>

@@ -1,9 +1,12 @@
 package com.elms.backend.organization.department;
 
 import com.elms.backend.common.exception.DuplicateResourceException;
+import com.elms.backend.common.exception.ResourceInUseException;
 import com.elms.backend.common.exception.ResourceNotFoundException;
+import com.elms.backend.employee.EmployeeRepository;
 import com.elms.backend.organization.department.dto.DepartmentRequest;
 import com.elms.backend.organization.department.dto.DepartmentResponse;
+import com.elms.backend.organization.position.PositionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,8 @@ import java.util.List;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final PositionRepository positionRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Transactional
     public DepartmentResponse createDepartment(DepartmentRequest request) {
@@ -70,6 +75,12 @@ public class DepartmentService {
     public void deleteDepartment(Long id) {
         if (!departmentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Department not found with id: " + id);
+        }
+        if (positionRepository.existsByDepartmentId(id)) {
+            throw new ResourceInUseException("Cannot delete department because it still has associated positions");
+        }
+        if (employeeRepository.existsByDepartmentId(id)) {
+            throw new ResourceInUseException("Cannot delete department because it still has associated employees");
         }
         departmentRepository.deleteById(id);
     }

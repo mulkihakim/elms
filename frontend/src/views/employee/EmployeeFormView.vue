@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
+import { useNotify } from '@/composables/useNotify'
 import { useEmployeeStore } from '@/stores/employeeStore'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import positionApi from '@/api/positionApi'
@@ -12,7 +12,7 @@ import BaseSelect from '@/components/common/BaseSelect.vue'
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
+const notify = useNotify()
 const employeeStore = useEmployeeStore()
 const departmentStore = useDepartmentStore()
 
@@ -81,16 +81,13 @@ watch(
       console.error('Failed to load positions for department:', err)
       departmentPositions.value = []
     }
-  }
+  },
 )
 
 onMounted(async () => {
   loading.value = true
   try {
-    await Promise.all([
-      departmentStore.fetchAllDepartments(),
-      employeeStore.fetchActiveEmployees(),
-    ])
+    await Promise.all([departmentStore.fetchAllDepartments(), employeeStore.fetchActiveEmployees()])
 
     if (isEditing.value) {
       const data = await employeeStore.getEmployeeById(employeeId.value)
@@ -111,12 +108,10 @@ onMounted(async () => {
       }
     }
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Memuat Data',
-      detail: err.message || 'Terjadi kesalahan saat memuat data karyawan.',
-      life: 4000,
-    })
+    notify.showError(
+      err.message || 'Terjadi kesalahan saat memuat data karyawan.',
+      'Gagal Memuat Data',
+    )
     router.push('/employees')
   } finally {
     loading.value = false
@@ -197,20 +192,10 @@ async function handleSubmit() {
 
     if (isEditing.value) {
       await employeeStore.updateEmployee(employeeId.value, payload)
-      toast.add({
-        severity: 'success',
-        summary: 'Berhasil Diperbarui',
-        detail: 'Data karyawan berhasil disimpan.',
-        life: 3000,
-      })
+      notify.showSuccess('Data karyawan berhasil disimpan.', 'Berhasil Diperbarui')
     } else {
       await employeeStore.createEmployee(payload)
-      toast.add({
-        severity: 'success',
-        summary: 'Berhasil Ditambahkan',
-        detail: 'Karyawan baru berhasil didaftarkan.',
-        life: 3000,
-      })
+      notify.showSuccess('Karyawan baru berhasil didaftarkan.', 'Berhasil Ditambahkan')
     }
 
     router.push('/employees')
@@ -218,12 +203,7 @@ async function handleSubmit() {
     if (err.message && err.message.toLowerCase().includes('already exists')) {
       errors.value.email = 'Email sudah digunakan oleh karyawan lain'
     } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Gagal Menyimpan',
-        detail: err.message || 'Terjadi kesalahan saat menyimpan data.',
-        life: 4000,
-      })
+      notify.showError(err.message || 'Terjadi kesalahan saat menyimpan data.', 'Gagal Menyimpan')
     }
   } finally {
     submitting.value = false
@@ -250,14 +230,21 @@ async function handleSubmit() {
             {{ isEditing ? 'Ubah Data Karyawan' : 'Tambah Karyawan Baru' }}
           </h1>
           <p class="text-xs text-slate-500 mt-0.5">
-            {{ isEditing ? 'Perbarui informasi dan struktur organisasi karyawan' : 'Isi formulir lengkap untuk mendaftarkan karyawan baru ke dalam sistem' }}
+            {{
+              isEditing
+                ? 'Perbarui informasi dan struktur organisasi karyawan'
+                : 'Isi formulir lengkap untuk mendaftarkan karyawan baru ke dalam sistem'
+            }}
           </p>
         </div>
       </div>
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="bg-white p-12 rounded-xl border border-slate-200 text-center text-slate-500">
+    <div
+      v-if="loading"
+      class="bg-white p-12 rounded-xl border border-slate-200 text-center text-slate-500"
+    >
       <i class="pi pi-spin pi-spinner text-3xl text-indigo-600 mb-3 block"></i>
       Memuat formulir...
     </div>
@@ -271,7 +258,9 @@ async function handleSubmit() {
             <i class="pi pi-id-card text-indigo-600"></i>
             Informasi Pribadi & Kontak
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Identitas dasar karyawan untuk pencatatan dan korespondensi</p>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Identitas dasar karyawan untuk pencatatan dan korespondensi
+          </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -317,7 +306,9 @@ async function handleSubmit() {
             <i class="pi pi-sitemap text-indigo-600"></i>
             Penempatan Organisasi & Relasi Atasan
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Departemen, jabatan, dan garis pelaporan atasan langsung (Manager)</p>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Departemen, jabatan, dan garis pelaporan atasan langsung (Manager)
+          </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -368,7 +359,8 @@ async function handleSubmit() {
               filter
             />
             <small class="text-xs text-slate-500 block mt-1">
-              Atasan ini yang akan menerima dan menyetujui pengajuan cuti serta mengisi evaluasi kinerja karyawan.
+              Atasan ini yang akan menerima dan menyetujui pengajuan cuti serta mengisi evaluasi
+              kinerja karyawan.
             </small>
           </div>
         </div>
@@ -381,7 +373,9 @@ async function handleSubmit() {
             <i class="pi pi-shield text-indigo-600"></i>
             Status Kepegawaian & Akses Sistem
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Peran hak akses, status siklus kerja, dan jatah cuti awal tahun</p>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Peran hak akses, status siklus kerja, dan jatah cuti awal tahun
+          </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -438,8 +432,16 @@ async function handleSubmit() {
               v-model="form.password"
               type="password"
               label="Kata Sandi (Password)"
-              :placeholder="isEditing ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukkan password akun (default: password123)'"
-              :help-text="isEditing ? 'Biarkan kosong untuk mempertahankan password lama' : 'Password awal yang dipakai karyawan untuk login ke sistem'"
+              :placeholder="
+                isEditing
+                  ? 'Kosongkan jika tidak ingin mengubah password'
+                  : 'Masukkan password akun (default: password123)'
+              "
+              :help-text="
+                isEditing
+                  ? 'Biarkan kosong untuk mempertahankan password lama'
+                  : 'Password awal yang dipakai karyawan untuk login ke sistem'
+              "
             />
           </div>
         </div>

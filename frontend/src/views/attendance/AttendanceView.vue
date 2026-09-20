@@ -6,6 +6,7 @@ import { useDepartmentStore } from '@/stores/departmentStore'
 import AttendanceWidget from '@/components/attendance/AttendanceWidget.vue'
 import AttendanceSummaryCards from '@/components/attendance/AttendanceSummaryCards.vue'
 import BaseTable from '@/components/common/BaseTable.vue'
+import BaseInput from '@/components/common/BaseInput.vue'
 import BaseSelect from '@/components/common/BaseSelect.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
@@ -31,7 +32,7 @@ const statusOptions = [
 
 const departmentOptions = computed(() => [
   { label: 'Semua Departemen', value: null },
-  ...departmentStore.departments.map((d) => ({
+  ...departmentStore.allDepartments.map((d) => ({
     label: d.name,
     value: d.id,
   })),
@@ -87,8 +88,14 @@ onMounted(async () => {
   loadData()
 })
 
-watch(activeTab, () => {
+watch(activeTab, (newTab) => {
   resetFilters()
+  if (newTab === 'all') {
+    if (departmentStore.allDepartments.length === 0) {
+      departmentStore.fetchAllDepartments()
+    }
+    attendanceStore.fetchSummary()
+  }
   loadData()
 })
 
@@ -225,43 +232,48 @@ function formatDuration(minutes) {
     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
       <div class="flex flex-wrap items-end gap-3">
         <!-- Filter Rentang Tanggal -->
-        <div class="flex flex-col gap-1 text-xs font-medium text-slate-600">
-          <label for="filter-from">Dari Tanggal:</label>
-          <input
+        <div class="w-full sm:w-44">
+          <BaseInput
             id="filter-from"
             v-model="filterFrom"
             type="date"
-            class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-1 focus:ring-indigo-500"
+            label="Dari Tanggal"
           />
         </div>
 
-        <div class="flex flex-col gap-1 text-xs font-medium text-slate-600">
-          <label for="filter-to">Sampai Tanggal:</label>
-          <input
+        <div class="w-full sm:w-44">
+          <BaseInput
             id="filter-to"
             v-model="filterTo"
             type="date"
-            class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:ring-1 focus:ring-indigo-500"
+            label="Sampai Tanggal"
           />
         </div>
 
         <!-- Filter Departemen (Khusus Tab Seluruh Karyawan / HR) -->
-        <div v-if="activeTab === 'all'" class="w-52">
+        <div v-if="activeTab === 'all'" class="w-full sm:w-56">
           <BaseSelect
             v-model="selectedDepartment"
             label="Departemen"
             :options="departmentOptions"
+            option-label="label"
+            option-value="value"
             placeholder="Pilih Departemen"
+            show-clear
+            filter
           />
         </div>
 
         <!-- Filter Status Kehadiran -->
-        <div v-if="activeTab === 'all'" class="w-48">
+        <div v-if="activeTab === 'all'" class="w-full sm:w-52">
           <BaseSelect
             v-model="selectedStatus"
             label="Status"
             :options="statusOptions"
+            option-label="label"
+            option-value="value"
             placeholder="Pilih Status"
+            show-clear
           />
         </div>
 
@@ -270,7 +282,6 @@ function formatDuration(minutes) {
           <BaseButton
             label="Terapkan"
             icon="pi pi-filter"
-            size="small"
             @click="handleApplyFilter"
           />
           <BaseButton
@@ -278,7 +289,6 @@ function formatDuration(minutes) {
             icon="pi pi-refresh"
             variant="secondary"
             outlined
-            size="small"
             @click="handleResetFilter"
           />
         </div>
@@ -290,7 +300,9 @@ function formatDuration(minutes) {
     <div v-if="activeTab === 'me'">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-base font-bold text-slate-800">Riwayat Presensi Saya</h2>
-        <span class="text-xs text-slate-500 font-medium">Total: {{ attendanceStore.totalHistory }} data</span>
+        <span class="text-xs text-slate-500 font-medium"
+          >Total: {{ attendanceStore.totalHistory }} data</span
+        >
       </div>
 
       <BaseTable
@@ -326,7 +338,9 @@ function formatDuration(minutes) {
     <div v-else-if="activeTab === 'team'">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-base font-bold text-slate-800">Kehadiran Anggota Tim</h2>
-        <span class="text-xs text-slate-500 font-medium">Total: {{ attendanceStore.totalTeam }} data</span>
+        <span class="text-xs text-slate-500 font-medium"
+          >Total: {{ attendanceStore.totalTeam }} data</span
+        >
       </div>
 
       <BaseTable
@@ -366,7 +380,9 @@ function formatDuration(minutes) {
     <div v-else-if="activeTab === 'all'">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-base font-bold text-slate-800">Rekapitulasi Kehadiran Karyawan</h2>
-        <span class="text-xs text-slate-500 font-medium">Total: {{ attendanceStore.totalAll }} data</span>
+        <span class="text-xs text-slate-500 font-medium"
+          >Total: {{ attendanceStore.totalAll }} data</span
+        >
       </div>
 
       <BaseTable

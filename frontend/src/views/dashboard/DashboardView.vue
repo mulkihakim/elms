@@ -29,7 +29,9 @@ onMounted(async () => {
 <template>
   <div class="space-y-6">
     <!-- Welcome Banner -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div
+      class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
+    >
       <div class="space-y-1">
         <div class="flex items-center gap-2">
           <h1 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">
@@ -44,10 +46,21 @@ onMounted(async () => {
 
       <div class="flex items-center gap-2">
         <RouterLink to="/departments">
-          <BaseButton label="Kelola Departemen" icon="pi pi-building" variant="primary" size="small" />
+          <BaseButton
+            label="Kelola Departemen"
+            icon="pi pi-building"
+            variant="primary"
+            size="small"
+          />
         </RouterLink>
         <RouterLink to="/positions">
-          <BaseButton label="Kelola Posisi" icon="pi pi-briefcase" variant="secondary" size="small" outlined />
+          <BaseButton
+            label="Kelola Posisi"
+            icon="pi pi-briefcase"
+            variant="secondary"
+            size="small"
+            outlined
+          />
         </RouterLink>
       </div>
     </div>
@@ -55,65 +68,94 @@ onMounted(async () => {
     <!-- Quick Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Card Departemen -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+      <div
+        class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between"
+      >
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Departemen</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"
+            >Total Departemen</span
+          >
           <div class="text-2xl font-bold text-slate-800 mt-1">
             {{ departmentStore.totalElements }}
           </div>
-          <RouterLink to="/departments" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+          <RouterLink
+            to="/departments"
+            class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block"
+          >
             Lihat data &rarr;
           </RouterLink>
         </div>
-        <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+        <div
+          class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl"
+        >
           <i class="pi pi-building"></i>
         </div>
       </div>
 
       <!-- Card Posisi -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+      <div
+        class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between"
+      >
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Posisi</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"
+            >Total Posisi</span
+          >
           <div class="text-2xl font-bold text-slate-800 mt-1">
             {{ positionStore.totalElements }}
           </div>
-          <RouterLink to="/positions" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+          <RouterLink
+            to="/positions"
+            class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block"
+          >
             Lihat data &rarr;
           </RouterLink>
         </div>
-        <div class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+        <div
+          class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl"
+        >
           <i class="pi pi-briefcase"></i>
         </div>
       </div>
 
       <!-- Card Karyawan -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+      <div
+        class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between"
+      >
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Karyawan</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"
+            >Total Karyawan</span
+          >
           <div class="text-2xl font-bold text-slate-800 mt-1">
             {{ employeeStore.totalElements }}
           </div>
-          <RouterLink to="/employees" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block">
+          <RouterLink
+            to="/employees"
+            class="text-xs font-medium text-indigo-600 hover:text-indigo-800 mt-2 inline-block"
+          >
             Lihat data &rarr;
           </RouterLink>
         </div>
-        <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+        <div
+          class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl"
+        >
           <i class="pi pi-users"></i>
         </div>
       </div>
 
       <!-- Card Cuti (Placeholder status) -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+      <div
+        class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between"
+      >
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Pengajuan Cuti</span>
-          <div class="text-2xl font-bold text-slate-800 mt-1">
-            -
-          </div>
-          <span class="text-xs text-slate-400 mt-2 inline-block">
-            Modul Leave Segera
-          </span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"
+            >Pengajuan Cuti</span
+          >
+          <div class="text-2xl font-bold text-slate-800 mt-1">-</div>
+          <span class="text-xs text-slate-400 mt-2 inline-block"> Modul Leave Segera </span>
         </div>
-        <div class="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+        <div
+          class="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl"
+        >
           <i class="pi pi-calendar-minus"></i>
         </div>
       </div>
@@ -133,7 +175,10 @@ onMounted(async () => {
           </RouterLink>
         </div>
 
-        <div v-if="departmentStore.departments.length === 0" class="py-6 text-center text-slate-400 text-sm">
+        <div
+          v-if="departmentStore.departments.length === 0"
+          class="py-6 text-center text-slate-400 text-sm"
+        >
           Belum ada data departemen.
         </div>
         <ul v-else class="divide-y divide-slate-100 text-sm">
@@ -160,7 +205,10 @@ onMounted(async () => {
           </RouterLink>
         </div>
 
-        <div v-if="positionStore.positions.length === 0" class="py-6 text-center text-slate-400 text-sm">
+        <div
+          v-if="positionStore.positions.length === 0"
+          class="py-6 text-center text-slate-400 text-sm"
+        >
           Belum ada data posisi.
         </div>
         <ul v-else class="divide-y divide-slate-100 text-sm">

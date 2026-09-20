@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { setupRouteGuards } from './guards'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,12 +19,21 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/dashboard',
+          redirect: () => {
+            const authStore = useAuthStore()
+            return authStore.isEmployee ? '/attendance' : '/dashboard'
+          },
         },
         {
           path: 'dashboard',
           name: 'dashboard',
           component: () => import('@/views/dashboard/DashboardView.vue'),
+          meta: { roles: ['HR', 'MANAGER'] },
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/views/employee/ProfileView.vue'),
         },
         {
           path: 'departments',

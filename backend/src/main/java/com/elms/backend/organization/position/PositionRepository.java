@@ -14,6 +14,8 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
 
     Page<Position> findByDepartmentId(Long departmentId, Pageable pageable);
 
+    boolean existsByDepartmentId(Long departmentId);
+
     boolean existsByTitleAndDepartmentId(String title, Long departmentId);
 
     boolean existsByTitleAndDepartmentIdAndIdNot(String title, Long departmentId, Long id);

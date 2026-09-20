@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useToast } from 'primevue/usetoast'
+import { useNotify } from '@/composables/useNotify'
 import { useConfirm } from 'primevue/useconfirm'
 import { usePositionStore } from '@/stores/positionStore'
 import { useDepartmentStore } from '@/stores/departmentStore'
@@ -10,7 +10,7 @@ import BaseSelect from '@/components/common/BaseSelect.vue'
 import BaseTable from '@/components/common/BaseTable.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
 
-const toast = useToast()
+const notify = useNotify()
 const confirm = useConfirm()
 const positionStore = usePositionStore()
 const departmentStore = useDepartmentStore()
@@ -48,22 +48,14 @@ const filteredPositions = computed(() => {
 })
 
 onMounted(async () => {
-  await Promise.all([
-    departmentStore.fetchAllDepartments(),
-    loadData(),
-  ])
+  await Promise.all([departmentStore.fetchAllDepartments(), loadData()])
 })
 
 async function loadData() {
   try {
     await positionStore.fetchPositions(selectedDeptFilter.value, 0, 50)
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Memuat Data',
-      detail: err.message || 'Terjadi kesalahan saat memuat posisi.',
-      life: 4000,
-    })
+    notify.showError(err.message || 'Terjadi kesalahan saat memuat posisi.', 'Gagal Memuat Data')
   }
 }
 
@@ -126,29 +118,17 @@ async function handleSubmit() {
 
     if (isEditing.value) {
       await positionStore.updatePosition(editingId.value, payload)
-      toast.add({
-        severity: 'success',
-        summary: 'Berhasil',
-        detail: 'Posisi berhasil diperbarui.',
-        life: 3000,
-      })
+      notify.showSuccess('Posisi berhasil diperbarui.')
     } else {
       await positionStore.createPosition(payload)
-      toast.add({
-        severity: 'success',
-        summary: 'Berhasil',
-        detail: 'Posisi baru berhasil ditambahkan.',
-        life: 3000,
-      })
+      notify.showSuccess('Posisi baru berhasil ditambahkan.')
     }
     isModalOpen.value = false
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Menyimpan',
-      detail: err.message || 'Terjadi kesalahan saat menyimpan data posisi.',
-      life: 4000,
-    })
+    notify.showError(
+      err.message || 'Terjadi kesalahan saat menyimpan data posisi.',
+      'Gagal Menyimpan',
+    )
   } finally {
     submitting.value = false
   }
@@ -165,19 +145,9 @@ function confirmDelete(pos) {
     accept: async () => {
       try {
         await positionStore.deletePosition(pos.id)
-        toast.add({
-          severity: 'success',
-          summary: 'Berhasil',
-          detail: 'Posisi berhasil dihapus.',
-          life: 3000,
-        })
+        notify.showSuccess('Posisi berhasil dihapus.')
       } catch (err) {
-        toast.add({
-          severity: 'error',
-          summary: 'Gagal Menghapus',
-          detail: err.message || 'Tidak dapat menghapus posisi.',
-          life: 4000,
-        })
+        notify.showError(err.message || 'Tidak dapat menghapus posisi.', 'Gagal Menghapus')
       }
     },
   })
@@ -212,11 +182,7 @@ function confirmDelete(pos) {
       <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
         <!-- Cari Judul -->
         <div class="w-full sm:w-64">
-          <BaseInput
-            v-model="searchQuery"
-            placeholder="Cari judul posisi..."
-            class="text-sm"
-          />
+          <BaseInput v-model="searchQuery" placeholder="Cari judul posisi..." class="text-sm" />
         </div>
 
         <!-- Filter Departemen -->
@@ -278,10 +244,7 @@ function confirmDelete(pos) {
     </BaseTable>
 
     <!-- Modal Form Tambah / Edit -->
-    <BaseModal
-      v-model="isModalOpen"
-      :title="isEditing ? 'Ubah Posisi' : 'Tambah Posisi Baru'"
-    >
+    <BaseModal v-model="isModalOpen" :title="isEditing ? 'Ubah Posisi' : 'Tambah Posisi Baru'">
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <BaseInput
           id="position-title"
@@ -307,12 +270,7 @@ function confirmDelete(pos) {
       </form>
 
       <template #footer>
-        <BaseButton
-          label="Batal"
-          variant="secondary"
-          outlined
-          @click="isModalOpen = false"
-        />
+        <BaseButton label="Batal" variant="secondary" outlined @click="isModalOpen = false" />
         <BaseButton
           :label="isEditing ? 'Simpan Perubahan' : 'Tambah'"
           variant="primary"

@@ -17,7 +17,7 @@ apiClient.interceptors.request.use(
     }
     return config
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 )
 
 // Response Interceptor: tangani format ApiResponse dari backend
@@ -46,7 +46,7 @@ apiClient.interceptors.response.use(
       code: 'NETWORK_ERROR',
       message: 'Tidak dapat terhubung ke server backend',
     })
-  }
+  },
 )
 
 export default apiClient

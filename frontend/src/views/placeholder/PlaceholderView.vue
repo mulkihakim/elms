@@ -49,13 +49,19 @@ const moduleDetails = computed(() => {
 </script>
 
 <template>
-  <div class="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-2xs space-y-4 my-8">
-    <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl mx-auto">
+  <div
+    class="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-2xs space-y-4 my-8"
+  >
+    <div
+      class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl mx-auto"
+    >
       <i :class="moduleDetails.icon"></i>
     </div>
 
     <div class="space-y-2">
-      <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
+      <span
+        class="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full"
+      >
         {{ moduleDetails.section }}
       </span>
       <h2 class="text-2xl font-bold text-slate-800">
@@ -71,7 +77,12 @@ const moduleDetails = computed(() => {
         <BaseButton label="Lihat Modul Departemen" icon="pi pi-building" variant="primary" />
       </RouterLink>
       <RouterLink to="/dashboard">
-        <BaseButton label="Kembali ke Dashboard" icon="pi pi-th-large" variant="secondary" outlined />
+        <BaseButton
+          label="Kembali ke Dashboard"
+          icon="pi pi-th-large"
+          variant="secondary"
+          outlined
+        />
       </RouterLink>
     </div>
   </div>

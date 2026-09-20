@@ -42,11 +42,19 @@ export const employeeApi = {
   },
 
   /**
-   * Menghapus karyawan
-   * @param {string} id UUID
+   * Mengambil profil karyawan yang sedang login
    */
-  deleteEmployee(id) {
-    return apiClient.delete(`/employees/${id}`)
+  getMyProfile() {
+    return apiClient.get('/employees/me')
+  },
+
+  /**
+   * Mengubah status karyawan (soft delete/status change)
+   * @param {string} id UUID
+   * @param {string} status ACTIVE | RESIGNED | TERMINATED | ON_LEAVE
+   */
+  updateEmployeeStatus(id, status) {
+    return apiClient.patch(`/employees/${id}/status`, null, { params: { status } })
   },
 }
 

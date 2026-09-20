@@ -39,6 +39,10 @@ public class EmployeeService {
         Position position = positionRepository.findById(request.getPositionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Position not found with id: " + request.getPositionId()));
 
+        if (!position.getDepartment().getId().equals(department.getId())) {
+            throw new IllegalArgumentException("Position must belong to the selected department");
+        }
+
         Employee manager = null;
         if (request.getManagerId() != null) {
             manager = employeeRepository.findById(request.getManagerId())
@@ -105,6 +109,10 @@ public class EmployeeService {
         Position position = positionRepository.findById(request.getPositionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Position not found with id: " + request.getPositionId()));
 
+        if (!position.getDepartment().getId().equals(department.getId())) {
+            throw new IllegalArgumentException("Position must belong to the selected department");
+        }
+
         Employee manager = null;
         if (request.getManagerId() != null) {
             if (request.getManagerId().equals(id)) {
@@ -140,10 +148,11 @@ public class EmployeeService {
     }
 
     @Transactional
-    public void deleteEmployee(UUID id) {
-        if (!employeeRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Employee not found with id: " + id);
-        }
-        employeeRepository.deleteById(id);
+    public EmployeeResponse updateEmployeeStatus(UUID id, EmploymentStatus status) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+        employee.setEmploymentStatus(status);
+        Employee updated = employeeRepository.save(employee);
+        return EmployeeResponse.fromEntity(updated);
     }
 }

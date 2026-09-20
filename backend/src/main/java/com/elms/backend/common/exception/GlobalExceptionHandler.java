@@ -38,9 +38,14 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, "INVALID_STATUS_TRANSITION", ex.getMessage());
     }
 
+    @ExceptionHandler(ResourceInUseException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResourceInUse(ResourceInUseException ex) {
+        return buildResponse(HttpStatus.CONFLICT, "RESOURCE_IN_USE", ex.getMessage());
+    }
+
     @ExceptionHandler(InsufficientLeaveBalanceException.class)
     public ResponseEntity<ApiResponse<Void>> handleInsufficientLeaveBalance(InsufficientLeaveBalanceException ex) {
-        return buildResponse(HttpStatus.UNPROCESSABLE_CONTENT, "INSUFFICIENT_LEAVE_BALANCE", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, "LEAVE_BALANCE_INSUFFICIENT", ex.getMessage());
     }
 
     // ── Security Exceptions ──────────────────────────────────────────

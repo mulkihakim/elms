@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.elms.backend.auth.security.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,16 @@ public class EmployeeController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<EmployeeResponse>> getCurrentEmployee(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new org.springframework.security.access.AccessDeniedException("User not authenticated");
+        }
+        EmployeeResponse response = employeeService.getEmployeeById(userDetails.getId());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     @GetMapping("/active")
     public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getActiveEmployees() {
         List<EmployeeResponse> response = employeeService.getActiveEmployees();
@@ -66,10 +78,12 @@ public class EmployeeController {
         return ResponseEntity.ok(ApiResponse.success(response, "Employee updated successfully"));
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('HR')")
-    public ResponseEntity<ApiResponse<Void>> deleteEmployee(@PathVariable UUID id) {
-        employeeService.deleteEmployee(id);
-        return ResponseEntity.ok(ApiResponse.success(null, "Employee deleted successfully"));
+    public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployeeStatus(
+            @PathVariable UUID id,
+            @RequestParam EmploymentStatus status) {
+        EmployeeResponse response = employeeService.updateEmployeeStatus(id, status);
+        return ResponseEntity.ok(ApiResponse.success(response, "Employee status updated successfully"));
     }
 }

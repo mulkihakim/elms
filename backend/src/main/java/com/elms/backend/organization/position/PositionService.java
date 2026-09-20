@@ -1,7 +1,9 @@
 package com.elms.backend.organization.position;
 
 import com.elms.backend.common.exception.DuplicateResourceException;
+import com.elms.backend.common.exception.ResourceInUseException;
 import com.elms.backend.common.exception.ResourceNotFoundException;
+import com.elms.backend.employee.EmployeeRepository;
 import com.elms.backend.organization.department.Department;
 import com.elms.backend.organization.department.DepartmentRepository;
 import com.elms.backend.organization.position.dto.PositionRequest;
@@ -20,6 +22,7 @@ public class PositionService {
 
     private final PositionRepository positionRepository;
     private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Transactional
     public PositionResponse createPosition(PositionRequest request) {
@@ -86,6 +89,9 @@ public class PositionService {
     public void deletePosition(Long id) {
         if (!positionRepository.existsById(id)) {
             throw new ResourceNotFoundException("Position not found with id: " + id);
+        }
+        if (employeeRepository.existsByPositionId(id)) {
+            throw new ResourceInUseException("Cannot delete position because it still has associated employees");
         }
         positionRepository.deleteById(id);
     }

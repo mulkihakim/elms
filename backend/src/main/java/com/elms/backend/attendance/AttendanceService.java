@@ -34,6 +34,19 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeRepository employeeRepository;
 
+    @org.springframework.beans.factory.annotation.Value("${elms.attendance.work-start:09:00}")
+    private String workStartConfig = "09:00";
+
+    public LocalTime getWorkStartTime() {
+        try {
+            if (workStartConfig != null && !workStartConfig.isBlank()) {
+                return LocalTime.parse(workStartConfig.trim());
+            }
+        } catch (Exception ignored) {
+        }
+        return WORK_START_TIME;
+    }
+
     @Transactional
     public AttendanceResponse checkIn(UUID employeeId, CheckInRequest request) {
         LocalDate today = LocalDate.now();
@@ -52,7 +65,7 @@ public class AttendanceService {
             throw new DuplicateResourceException("Anda sudah melakukan check-in hari ini pada pukul " + timeStr);
         }
 
-        AttendanceStatus status = now.toLocalTime().isAfter(WORK_START_TIME)
+        AttendanceStatus status = now.toLocalTime().isAfter(getWorkStartTime())
                 ? AttendanceStatus.LATE
                 : AttendanceStatus.ON_TIME;
 

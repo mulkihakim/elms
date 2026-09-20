@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useToast } from 'primevue/usetoast'
+import { useNotify } from '@/composables/useNotify'
 import { useConfirm } from 'primevue/useconfirm'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import BaseButton from '@/components/common/BaseButton.vue'
@@ -8,7 +8,7 @@ import BaseInput from '@/components/common/BaseInput.vue'
 import BaseTable from '@/components/common/BaseTable.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
 
-const toast = useToast()
+const notify = useNotify()
 const confirm = useConfirm()
 const departmentStore = useDepartmentStore()
 
@@ -48,12 +48,10 @@ async function loadData() {
   try {
     await departmentStore.fetchDepartments(0, 50)
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Memuat Data',
-      detail: err.message || 'Terjadi kesalahan saat memuat departemen.',
-      life: 4000,
-    })
+    notify.showError(
+      err.message || 'Terjadi kesalahan saat memuat departemen.',
+      'Gagal Memuat Data',
+    )
   }
 }
 
@@ -97,34 +95,19 @@ async function handleSubmit() {
       await departmentStore.updateDepartment(editingId.value, {
         name: form.value.name.trim(),
       })
-      toast.add({
-        severity: 'success',
-        summary: 'Berhasil',
-        detail: 'Departemen berhasil diperbarui.',
-        life: 3000,
-      })
+      notify.showSuccess('Departemen berhasil diperbarui.')
     } else {
       await departmentStore.createDepartment({
         name: form.value.name.trim(),
       })
-      toast.add({
-        severity: 'success',
-        summary: 'Berhasil',
-        detail: 'Departemen baru berhasil ditambahkan.',
-        life: 3000,
-      })
+      notify.showSuccess('Departemen baru berhasil ditambahkan.')
     }
     isModalOpen.value = false
   } catch (err) {
     if (err.message && err.message.toLowerCase().includes('already exists')) {
       errors.value.name = 'Nama departemen sudah digunakan'
     } else {
-      toast.add({
-        severity: 'error',
-        summary: 'Gagal Menyimpan',
-        detail: err.message || 'Terjadi kesalahan saat menyimpan data.',
-        life: 4000,
-      })
+      notify.showError(err.message || 'Terjadi kesalahan saat menyimpan data.', 'Gagal Menyimpan')
     }
   } finally {
     submitting.value = false
@@ -142,19 +125,9 @@ function confirmDelete(department) {
     accept: async () => {
       try {
         await departmentStore.deleteDepartment(department.id)
-        toast.add({
-          severity: 'success',
-          summary: 'Berhasil',
-          detail: 'Departemen berhasil dihapus.',
-          life: 3000,
-        })
+        notify.showSuccess('Departemen berhasil dihapus.')
       } catch (err) {
-        toast.add({
-          severity: 'error',
-          summary: 'Gagal Menghapus',
-          detail: err.message || 'Tidak dapat menghapus departemen.',
-          life: 4000,
-        })
+        notify.showError(err.message || 'Tidak dapat menghapus departemen.', 'Gagal Menghapus')
       }
     },
   })
@@ -183,13 +156,11 @@ function confirmDelete(department) {
     </div>
 
     <!-- Filter & Search Toolbar -->
-    <div class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between gap-3">
+    <div
+      class="bg-white p-3.5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between gap-3"
+    >
       <div class="max-w-xs w-full">
-        <BaseInput
-          v-model="searchQuery"
-          placeholder="Cari nama departemen..."
-          class="text-sm"
-        />
+        <BaseInput v-model="searchQuery" placeholder="Cari nama departemen..." class="text-sm" />
       </div>
 
       <div class="flex items-center gap-2">
@@ -252,12 +223,7 @@ function confirmDelete(department) {
       </form>
 
       <template #footer>
-        <BaseButton
-          label="Batal"
-          variant="secondary"
-          outlined
-          @click="isModalOpen = false"
-        />
+        <BaseButton label="Batal" variant="secondary" outlined @click="isModalOpen = false" />
         <BaseButton
           :label="isEditing ? 'Simpan Perubahan' : 'Tambah'"
           variant="primary"

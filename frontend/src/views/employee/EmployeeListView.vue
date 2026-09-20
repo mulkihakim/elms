@@ -1,8 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
+import { useNotify } from '@/composables/useNotify'
 import { useEmployeeStore } from '@/stores/employeeStore'
 import { useDepartmentStore } from '@/stores/departmentStore'
 import { EMPLOYMENT_STATUS_OPTIONS } from '@/utils/constants'
@@ -10,17 +9,22 @@ import BaseButton from '@/components/common/BaseButton.vue'
 import BaseInput from '@/components/common/BaseInput.vue'
 import BaseSelect from '@/components/common/BaseSelect.vue'
 import BaseTable from '@/components/common/BaseTable.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 
 const router = useRouter()
-const toast = useToast()
-const confirm = useConfirm()
+const notify = useNotify()
 const employeeStore = useEmployeeStore()
 const departmentStore = useDepartmentStore()
 
 const searchQuery = ref('')
 const selectedDepartment = ref(null)
 const selectedStatus = ref(null)
+
+const isStatusModalOpen = ref(false)
+const selectedEmployee = ref(null)
+const statusForm = ref({ status: 'ACTIVE' })
+const updatingStatus = ref(false)
 
 const tableColumns = [
   { field: 'fullName', header: 'Karyawan', sortable: true },
@@ -32,10 +36,7 @@ const tableColumns = [
 ]
 
 onMounted(async () => {
-  await Promise.all([
-    departmentStore.fetchAllDepartments(),
-    loadData(),
-  ])
+  await Promise.all([departmentStore.fetchAllDepartments(), loadData()])
 })
 
 async function loadData(page = 0) {
@@ -47,12 +48,10 @@ async function loadData(page = 0) {
     }
     await employeeStore.fetchEmployees(filters, page, 10)
   } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Gagal Memuat Data',
-      detail: err.message || 'Terjadi kesalahan saat memuat daftar karyawan.',
-      life: 4000,
-    })
+    notify.showError(
+      err.message || 'Terjadi kesalahan saat memuat daftar karyawan.',
+      'Gagal Memuat Data',
+    )
   }
 }
 
@@ -79,34 +78,27 @@ function navigateToEdit(id) {
   router.push(`/employees/${id}/edit`)
 }
 
-function confirmDelete(employee) {
-  confirm.require({
-    message: `Apakah Anda yakin ingin menghapus data karyawan "${employee.fullName}" (${employee.email})?`,
-    header: 'Konfirmasi Hapus Karyawan',
-    icon: 'pi pi-exclamation-triangle',
-    rejectLabel: 'Batal',
-    acceptLabel: 'Hapus',
-    acceptClass: 'p-button-danger',
-    accept: async () => {
-      try {
-        await employeeStore.deleteEmployee(employee.id)
-        toast.add({
-          severity: 'success',
-          summary: 'Berhasil',
-          detail: 'Data karyawan berhasil dihapus.',
-          life: 3000,
-        })
-        loadData(employeeStore.currentPage)
-      } catch (err) {
-        toast.add({
-          severity: 'error',
-          summary: 'Gagal Menghapus',
-          detail: err.message || 'Tidak dapat menghapus karyawan.',
-          life: 4000,
-        })
-      }
-    },
-  })
+function openStatusModal(employee) {
+  selectedEmployee.value = employee
+  statusForm.value.status = employee.employmentStatus
+  isStatusModalOpen.value = true
+}
+
+async function handleUpdateStatus() {
+  if (!selectedEmployee.value) return
+  updatingStatus.value = true
+  try {
+    await employeeStore.updateEmployeeStatus(selectedEmployee.value.id, statusForm.value.status)
+    notify.showSuccess(
+      `Status ${selectedEmployee.value.fullName} berhasil diubah menjadi ${statusForm.value.status}.`,
+    )
+    isStatusModalOpen.value = false
+    loadData(employeeStore.currentPage)
+  } catch (err) {
+    notify.showError(err.message || 'Gagal mengubah status karyawan.', 'Gagal Menyimpan')
+  } finally {
+    updatingStatus.value = false
+  }
 }
 </script>
 
@@ -123,11 +115,7 @@ function confirmDelete(employee) {
 
       <div>
         <RouterLink to="/employees/create">
-          <BaseButton
-            label="Tambah Karyawan"
-            icon="pi pi-user-plus"
-            variant="primary"
-          />
+          <BaseButton label="Tambah Karyawan" icon="pi pi-user-plus" variant="primary" />
         </RouterLink>
       </div>
     </div>
@@ -232,9 +220,7 @@ function confirmDelete(employee) {
         <span v-if="data.managerName" class="text-slate-700 text-sm font-medium">
           {{ data.managerName }}
         </span>
-        <span v-else class="text-slate-400 text-xs italic">
-          Tanpa Atasan Langsung
-        </span>
+        <span v-else class="text-slate-400 text-xs italic"> Tanpa Atasan Langsung </span>
       </template>
 
       <!-- Custom Kolom Status -->
@@ -261,15 +247,62 @@ function confirmDelete(employee) {
           @click="navigateToEdit(data.id)"
         />
         <BaseButton
-          icon="pi pi-trash"
-          variant="danger"
+          icon="pi pi-user-edit"
+          variant="secondary"
           size="small"
           text
           rounded
-          title="Hapus"
-          @click="confirmDelete(data)"
+          title="Ubah Status Kepegawaian"
+          @click="openStatusModal(data)"
         />
       </template>
     </BaseTable>
+
+    <!-- Modal Ubah Status Kepegawaian (Soft Delete / Status Change) -->
+    <BaseModal v-model="isStatusModalOpen" title="Ubah Status Kepegawaian" width="450px">
+      <div v-if="selectedEmployee" class="space-y-4">
+        <p class="text-sm text-slate-600">
+          Ubah status kepegawaian untuk karyawan:
+          <strong class="text-slate-800">{{ selectedEmployee.fullName }}</strong> ({{
+            selectedEmployee.email
+          }}).
+        </p>
+
+        <BaseSelect
+          v-model="statusForm.status"
+          label="Status Kepegawaian"
+          :options="EMPLOYMENT_STATUS_OPTIONS"
+          option-label="label"
+          option-value="value"
+          required
+        />
+
+        <div
+          v-if="statusForm.status === 'RESIGNED' || statusForm.status === 'TERMINATED'"
+          class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800"
+        >
+          <i class="pi pi-exclamation-triangle mr-1"></i>
+          Karyawan dengan status <strong>{{ statusForm.status }}</strong> tidak akan dapat melakukan
+          login atau mencatat absensi.
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <BaseButton
+            label="Batal"
+            variant="secondary"
+            :disabled="updatingStatus"
+            @click="isStatusModalOpen = false"
+          />
+          <BaseButton
+            label="Simpan Status"
+            variant="primary"
+            :loading="updatingStatus"
+            @click="handleUpdateStatus"
+          />
+        </div>
+      </template>
+    </BaseModal>
   </div>
 </template>

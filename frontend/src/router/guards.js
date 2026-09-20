@@ -6,7 +6,8 @@ export function setupRouteGuards(router) {
 
     // 1. Jika rute khusus tamu (misal halaman Login) dan user sudah login
     if (to.meta.guestOnly && authStore.isAuthenticated) {
-      return next({ path: '/dashboard' })
+      const defaultPath = authStore.isEmployee ? '/attendance' : '/dashboard'
+      return next({ path: defaultPath })
     }
 
     // 2. Jika rute membutuhkan autentikasi
@@ -23,7 +24,8 @@ export function setupRouteGuards(router) {
       if (to.meta.roles && Array.isArray(to.meta.roles)) {
         if (!to.meta.roles.includes(authStore.currentRole)) {
           // Role tidak memiliki izin akses ke rute ini
-          return next({ path: '/dashboard' })
+          const defaultPath = authStore.isEmployee ? '/attendance' : '/dashboard'
+          return next({ path: defaultPath })
         }
       }
     }

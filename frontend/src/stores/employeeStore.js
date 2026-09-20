@@ -136,6 +136,41 @@ export const useEmployeeStore = defineStore('employee', () => {
     }
   }
 
+  /**
+   * Mengambil profil karyawan yang sedang login
+   */
+  async function getMyProfile() {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await employeeApi.getMyProfile()
+      return response.data
+    } catch (err) {
+      error.value = err.message || 'Gagal memuat profil karyawan'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Mengubah status karyawan (soft delete/status mutation)
+   */
+  async function updateEmployeeStatus(id, status) {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await employeeApi.updateEmployeeStatus(id, status)
+      await fetchEmployees({}, currentPage.value, pageSize.value)
+      return response
+    } catch (err) {
+      error.value = err.message || 'Gagal memperbarui status karyawan'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     employees,
     activeEmployees,
@@ -148,8 +183,10 @@ export const useEmployeeStore = defineStore('employee', () => {
     fetchEmployees,
     fetchActiveEmployees,
     getEmployeeById,
+    getMyProfile,
     createEmployee,
     updateEmployee,
+    updateEmployeeStatus,
     deleteEmployee,
   }
 })

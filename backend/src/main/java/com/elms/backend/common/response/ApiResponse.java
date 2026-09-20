@@ -42,10 +42,10 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static <T> ApiResponse<T> error(String code, String message, Map<String, String> details) {
+    public static <T> ApiResponse<T> error(String code, String message, Map<String, String> fields) {
         return ApiResponse.<T>builder()
                 .success(false)
-                .error(new ApiError(code, message, details))
+                .error(new ApiError(code, message, fields, fields))
                 .build();
     }
 
@@ -56,9 +56,14 @@ public class ApiResponse<T> {
         private String code;
         private String message;
         private Map<String, String> details;
+        private Map<String, String> fields;
 
         public ApiError(String code, String message) {
-            this(code, message, null);
+            this(code, message, null, null);
+        }
+
+        public ApiError(String code, String message, Map<String, String> details) {
+            this(code, message, details, details);
         }
     }
 }

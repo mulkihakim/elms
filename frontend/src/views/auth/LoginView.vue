@@ -131,7 +131,9 @@ async function handleLogin() {
 
         <!-- Demo Accounts Section -->
         <div class="mt-8 pt-6 border-t border-slate-100">
-          <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center mb-3">
+          <p
+            class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center mb-3"
+          >
             Akun Percobaan (Klik untuk Isi Otomatis)
           </p>
           <div class="grid grid-cols-3 gap-2">
@@ -144,7 +146,9 @@ async function handleLogin() {
               @click="fillDemo(acc)"
             >
               <div class="text-xs font-bold">{{ acc.role }}</div>
-              <div class="text-[10px] opacity-80 truncate mt-0.5">{{ acc.email.split('@')[0] }}</div>
+              <div class="text-[10px] opacity-80 truncate mt-0.5">
+                {{ acc.email.split('@')[0] }}
+              </div>
             </button>
           </div>
         </div>

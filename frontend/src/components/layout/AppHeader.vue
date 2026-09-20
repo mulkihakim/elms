@@ -57,7 +57,7 @@ function handleLogout() {
 
 <template>
   <header
-    class="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shadow-2xs"
+    class="sticky top-0 z-30 h-16 shrink-0 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shadow-2xs"
   >
     <!-- Sisi Kiri: Logo & Toggle Sidebar -->
     <div class="flex items-center gap-3">

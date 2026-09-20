@@ -70,11 +70,7 @@ const selectedValue = computed({
 
 <template>
   <div class="flex flex-col gap-1.5 w-full">
-    <label
-      v-if="label"
-      :for="id"
-      class="text-sm font-medium text-slate-700 dark:text-slate-200"
-    >
+    <label v-if="label" :for="id" class="text-sm font-medium text-slate-700">
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
     </label>
