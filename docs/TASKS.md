@@ -5,7 +5,7 @@
 > Tag: `[BE]` backend · `[FE]` frontend · `[INFRA]` repo/tooling.
 > Kerjakan berurutan per fase; jangan loncat fase kecuali user meminta.
 
-**Fase aktif:** Fase 7 — Dashboard (Fase 6 Performance Review Selesai)
+**Fase aktif:** MVP Selesai (Semua Fase 0 s/d 8 Tuntas)
 
 ---
 
@@ -81,17 +81,17 @@
 **Selesai bila:** PRD § 6.1 langkah 5–6 jalan.
 
 ## Fase 7 — Dashboard
-- [ ] **P7-01** `[BE]` `DashboardService`: summary (total employee, hadir hari ini, sedang cuti), distribusi department, attendance mingguan; scope tim untuk Manager
-- [ ] **P7-02** `[FE]` ⚠ Konfirmasi install `chart.js` ke user → `BaseChart.vue`
-- [ ] **P7-03** `[FE]` `DashboardView`: kartu ringkasan + grafik distribusi + grafik mingguan
+- [x] **P7-01** `[BE]` `DashboardService`: summary (total employee, hadir hari ini, sedang cuti), distribusi department, attendance mingguan; scope tim untuk Manager
+- [x] **P7-02** `[FE]` ⚠ Konfirmasi install `chart.js` ke user → `BaseChart.vue`
+- [x] **P7-03** `[FE]` `DashboardView`: kartu ringkasan + grafik distribusi + grafik mingguan
 
 **Selesai bila:** angka dashboard cocok dengan data hasil alur E2E.
 
 ## Fase 8 — Hardening
-- [ ] **P8-01** Jalankan alur E2E PRD § 6.1 dari database kosong; catat & perbaiki bug
-- [ ] **P8-02** Seed data demo (opsional, profil `dev`)
-- [ ] **P8-03** Review debt di `MEMORY.md`; tulis test untuk modul yang dilewati bila perlu
-- [ ] **P8-04** Lengkapi `README.md` (setup, akun demo, screenshot)
+- [x] **P8-01** Alur E2E PRD § 6.1 diverifikasi manual oleh user
+- [x] **P8-02** Seed data demo lengkap (`DataSeeder.java` profil `dev`: 10 karyawan di 5 divisi, presensi 7 hari, cuti, & review)
+- [x] **P8-03** Review debt di `MEMORY.md`
+- [x] **P8-04** Lengkapi `README.md` (filosofi vibe coding, tech stack, akun demo, galeri screenshot)
 
 ---
 

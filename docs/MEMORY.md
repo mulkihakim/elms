@@ -7,11 +7,11 @@
  
 | | |
 |---|---|
-| Fase aktif | Fase 7 — Dashboard |
-| Task terakhir selesai | Fase 6 — Performance Review Selesai & Terverifikasi Penuh (P6-01 s/d P6-06) |
-| Sedang dikerjakan | Siap untuk Fase 7 (Dashboard: P7-01 s/d P7-03) |
+| Fase aktif | MVP Selesai (Semua Fase 0 s/d 8 Tuntas) |
+| Task terakhir selesai | Fase 8 — Hardening Selesai (P8-01 s/d P8-04) |
+| Sedang dikerjakan | Proyek ELMS MVP siap didemokan dan digunakan untuk portfolio |
 | Blocker | Tidak ada |
-| Terakhir diupdate | 2026-09-20 |
+| Terakhir diupdate | 2026-09-21 |
 
 ## 2. Decision Log
 
@@ -37,6 +37,8 @@
 | 2026-09-20 | Validasi saldo cuti: cek saat submit (pending belum memotong), cek ulang + lock pessimistic + potong saldo saat approve | Menghindari over-allocation tanpa mengorbankan kuota pending |
 | 2026-09-20 | Validasi tanggal cuti: dilarang backdate (startDate >= today) & overlap dengan PENDING/APPROVED ditolak 409 LEAVE_OVERLAP | Mencegah anomali transaksi jadwal |
 | 2026-09-20 | Review kinerja: hanya atasan langsung yang mengisi; HR baca-saja; pengisian/edit hanya selama rentang periode berjalan | Menjaga objektivitas hierarki dan integritas periode evaluasi |
+| 2026-09-21 | Dashboard role-scoped (HR: organisasi & chart departemen; Manager: tim & chart tren; Employee: personal metrics) & Chart.js diinstall | Menjaga privasi organisasi, mencegah kebocoran data master ke non-HR, serta memvisualisasikan tren presensi |
+| 2026-09-21 | Pasang `springdoc-openapi-starter-webmvc-ui:3.1.1` & `OpenApiConfig` (JWT Bearer support) | Menyediakan Swagger UI interaktif di `/swagger-ui.html` yang kompatibel dengan Spring Boot 4.x dan mengizinkan testing endpoint berotentikasi JWT |
 
 ## 3. Open Questions (butuh keputusan user — agent JANGAN asumsi)
 
@@ -70,8 +72,8 @@ Tiap item punya **rekomendasi** (⚠ PROPOSED). Setelah user memutuskan: pindahk
  
 | Tanggal | Ringkasan | File utama yang berubah |
 |---|---|---|
+| 2026-09-21 | Fase 8 (Hardening): Penyempurnaan seeder komprehensif (10 karyawan, 5 divisi, presensi 7 hari, cuti multi-status, review matriks), pembaruan README.md (filosofi vibe coding & learning journey, akun demo, galeri screenshot), verifikasi manual tuntas | `backend/common/seeder/DataSeeder.java`, `README.md`, `docs/screenshots/*`, `docs/*` |
+| 2026-09-21 | Implementasi modul Dashboard Fase 7 (P7-01 s/d P7-03): backend DashboardService & Controller (HR: organisasi, Manager: tim, Employee: personal), 5 unit test lolos (57 total), instalasi chart.js, BaseChart, dan DashboardView role-scoped | `backend/dashboard/*`, `frontend/src/components/common/BaseChart.vue`, `frontend/src/views/dashboard/*`, `frontend/src/api/*`, `frontend/src/stores/*`, `docs/*` |
 | 2026-09-20 | Implementasi modul Performance Review Fase 6 (P6-01 s/d P6-06): entity ReviewPeriod & PerformanceReview, service (overallScore avg 2 decimal, team validation, active period window), controller, 11 unit test lolos (52 total), UI Vue & Pinia store | `backend/performance/*`, `frontend/src/views/performance/*`, `frontend/src/api/*`, `frontend/src/stores/*`, `docs/*` |
 | 2026-09-20 | Penyusunan Implementation Plan Performance Review (Fase 6: P6-01 s/d P6-06) & perumusan diskusi Open Questions | `docs/TASKS.md`, `docs/MEMORY.md`, `implementation_plan.md` |
 | 2026-09-20 | Implementasi lengkap modul Leave Management Fase 5 (P5-01 s/d P5-07): entity, DTO, repo, service dengan pessimistic lock, exception, controller, 14 unit test lolos, UI Vue & Pinia store | `backend/leave/*`, `backend/common/exception/*`, `frontend/src/*`, `docs/*` |
-| 2026-09-20 | Penyusunan Implementation Plan Leave Management (Fase 5 Gate P5-01) & perumusan diskusi Open Questions | `docs/TASKS.md`, `docs/MEMORY.md`, `implementation_plan.md` |
-| 2026-09-20 | Audit & sinkronisasi docs ↔ codebase (Fase 0–4 dicatat selesai, gap diatasi, RULES.md dibuat) | `AGENTS.md`, `docs/*`, `backend/*`, `frontend/*` |

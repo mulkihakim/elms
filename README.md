@@ -1,22 +1,28 @@
 # Employee Lifecycle Management System (ELMS)
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Vue 3](https://img.shields.io/badge/Vue-3.x%20(Composition%20API)-4FC08D.svg)](https://vuejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+ELMS adalah sistem manajemen siklus hidup karyawan (*employee lifecycle*) berskala *enterprise MVP* yang memodelkan alur kerja nyata: **Onboarding & Master Organisasi → Presensi Harian (Toleransi & Ambang Batas) → Manajemen Cuti (Workflow Persetujuan & Pessimistic Locking) → Evaluasi Kinerja (Performance Review Multi-Aspek) → Executive & Team Dashboard**.
 
-ELMS adalah aplikasi portofolio Full-Stack yang memodelkan siklus hidup karyawan (*employee lifecycle*): **Onboarding/Organisasi → Presensi Harian → Manajemen Cuti (Approval Workflow) → Evaluasi Kinerja (Performance Review) → Executive Dashboard**.
+---
 
-Proyek ini dirancang untuk menunjukkan implementasi *clean architecture*, penanganan logika bisnis non-trivial (transaksional atomik, pencegahan *concurrency race condition*), serta keamanan berbasis peran (*Two-Tier Role-Based Access Control*).
+## 💡 Latar Belakang & Pendekatan Pengembangan (Vibe Coding & Learning Journey)
+
+> *"The best way to master a new tech stack is not by building another Todo App, but by building a real-world system with complex business rules and architectural challenges."*
+
+Proyek ini lahir dari keinginan untuk **mengeksplorasi dan menguasai *tech stack* modern** (Java 21 / Spring Boot, Vue 3 Composition API, PrimeVue, Tailwind CSS, dan PostgreSQL) melalui studi kasus dunia nyata yang sering ditemukan pada ekosistem korporat (*HRIS / Employee Management*).
+
+Dalam proses pengembangannya, proyek ini menerapkan paradigma **"Vibe Coding" (AI-Assisted Pair Programming)**:
+1. **Developer sebagai Architect & Domain Driver**: Menentukan *business logic*, spesifikasi API, pemodelan data, *edge cases*, dan tata kelola keamanan.
+2. **AI Agent sebagai Co-Pilot & Pair Programmer**: Membantu akselerasi penulisan *boilerplate*, refactoring komponen, sintesis dokumentasi teknis, dan perancangan *automated test suite*.
+3. **Standar Rekayasa Perangkat Lunak Tetap Utama**: Meskipun dibangun dengan bantuan AI, proyek ini **tidak mengorbankan kualitas rekayasa**. Seluruh aturan *clean architecture*, penanganan *concurrency race condition*, isolasi DTO, dan rangkaian **57 unit test otomatis** dijaga dengan disiplin tinggi.
 
 ---
 
 ## 🌟 Highlight Teknis & Keputusan Arsitektur
 
-* **Controller Tipis, Service Kaya Domain**: Controller hanya mengurus validasi format payload dan HTTP response status. Semua aturan bisnis, orkestrasi validasi, dan transaksi berada di Service Layer.
+* **Controller Tipis, Service Kaya Domain**: Controller hanya mengurus validasi format payload dan HTTP response status. Semua aturan bisnis, orkestrasi validasi, dan transaksi berada di Service Layer (`@Transactional`).
 * **Strict Two-Tier Authorization**:
   1. *Coarse-grained (Role-based)*: Dicek di level endpoint via Spring Security `@PreAuthorize("hasRole('...')")`.
-  2. *Fine-grained (Data-scope)*: Dicek di level query/service bean (contoh: Manager hanya dapat menyetujui cuti dan melihat absensi tim yang melaporkan langsung kepadanya via `manager_id`).
+  2. *Fine-grained (Data-scope)*: Dicek di level query/service bean (contoh: Manager hanya dapat menyetujui cuti dan melihat absensi tim yang melapor langsung kepadanya via `manager_id`).
 * **Atomic Leave Deduction & Concurrency Handling**:
   * Pengajuan cuti tidak langsung memotong saldo (status `PENDING`).
   * Saat *approval*, baris pemohon dikunci (*pessimistic locking* / transactional barrier) dan saldo divalidasi ulang sebelum dikurangi untuk mencegah *over-allocation* jika ada approval paralel.
@@ -25,46 +31,84 @@ Proyek ini dirancang untuk menunjukkan implementasi *clean architecture*, penang
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Galeri & Cuplikan Antarmuka (Screenshots Preview)
 
-### Backend
-- **Framework**: Java 21, Spring Boot 4.1.1
-- **Modules**: Spring Web, Spring Data JPA, Spring Security, Validation (Hibernate Validator), Lombok
-- **Security**: Stateless JWT (`jjwt`), BCrypt Password Hashing
-- **Database**: PostgreSQL 18
-- **Dokumentasi API**: Springdoc OpenAPI (Swagger UI)
+Berikut adalah panduan cuplikan antarmuka utama sistem ELMS:
 
-### Frontend
-- **Core**: Vue 3 (Composition API `<script setup>`), Vite
-- **State Management**: Pinia (Modular stores per domain)
-- **Routing**: Vue Router (Navigation Guards untuk route protection & role check)
-- **UI & Styling**: PrimeVue (Aura Preset, Primary Indigo) + Tailwind CSS
-- **HTTP Client**: Axios (Centralized interceptors untuk JWT injection & auto-logout 401)
+### 1. Executive HR Dashboard (Cakupan Organisasi Penuh)
+> *Menampilkan 4 kartu ringkasan eksekutif, Donut Chart distribusi karyawan per departemen, serta Stacked Bar Chart tren presensi 7 hari terakhir.*
+>
+> ![HR Dashboard](docs/screenshots/01-dashboard-hr.png)
+
+### 2. Manager Dashboard (Cakupan Tim Bawahan)
+> *Menampilkan data tim langsung yang diawasi oleh manajer, kartu persetujuan cuti pending bawahan, dan tren presensi tim.*
+>
+> ![Manager Dashboard](docs/screenshots/02-dashboard-manager.png)
+
+### 3. Employee Personal Home & Presensi Harian
+> *Beranda karyawan: jam check-in hari ini, status ON_TIME / LATE (ambang batas 09:00 WIB), dan sisa saldo cuti tahunan.*
+>
+> ![Employee Dashboard](docs/screenshots/03-dashboard-employee.png)
+
+### 4. Manajemen & Alur Persetujuan Cuti (Leave Approval Workflow)
+> *Formulir pengajuan cuti dengan penghitung otomatis hari kerja (skip Sabtu/Minggu) serta halaman persetujuan atasan dengan dialog konfirmasi.*
+>
+> ![Leave Management](docs/screenshots/04-leave-management.png)
+
+### 5. Evaluasi Kinerja (Performance Review Matrix)
+> *Formulir evaluasi manajer dengan 4 aspek kompetensi (skala 1–5), live average calculation (2 desimal), dan riwayat nilai bagi karyawan.*
+>
+> ![Performance Review](docs/screenshots/05-performance-review.png)
+
+### 6. Direktori Master Data Karyawan & Organisasi
+> *Tabel master karyawan berpaginasi lengkap dengan pencarian, filter departemen, dan pemetaan hierarki atasan langsung.*
+>
+> ![Employee Directory](docs/screenshots/06-employee-directory.png)
 
 ---
 
-## 📐 Arsitektur & Struktur Monorepo
+## 🛠️ Tech Stack
+
+### Backend
+- **Language & Framework**: Java 21, Spring Boot 4.1.1
+- **Persistence**: Spring Data JPA, Hibernate, PostgreSQL 16+ (Local Native)
+- **Security**: Spring Security 6, Stateless JWT (`jjwt` HS256), BCrypt Hashing
+- **Validation**: Hibernate Validator (Bean Validation API)
+- **API Documentation**: Springdoc OpenAPI (Swagger UI)
+- **Automated Testing**: JUnit 5, Mockito (57 Unit Tests Lulus)
+
+### Frontend
+- **Framework**: Vue 3 (Composition API `<script setup>`), Vite
+- **State Management**: Pinia (Modular Domain Stores)
+- **Routing**: Vue Router 4 (Navigation Guards & RBAC Role Protection)
+- **UI Components & Styling**: PrimeVue (Aura Preset) + Tailwind CSS v4
+- **Charts & Data Visualization**: Chart.js (via `BaseChart.vue`)
+- **HTTP Client**: Axios (Centralized Interceptors untuk token injection & handling)
+
+---
+
+## 📐 Arsitektur Monorepo
 
 ```text
 elms/
-├── backend/                  # Maven multi-package Spring Boot
-│   └── src/main/java/com/elms/
-│       ├── common/           # Response wrapper, GlobalExceptionHandler, Config, JWT
-│       ├── auth/             # Controller, Service, DTO, Filter
-│       ├── organization/     # Department & Position management
-│       ├── employee/         # Employee CRUD, Self-reference Manager, Profiles
-│       ├── attendance/       # Daily check-in/out, Work duration, Late calculation
-│       ├── leave/            # Leave submission, Balance validation, Approvals
-│       ├── performance/      # Review periods, Evaluations, Scoring logic
-│       └── dashboard/        # Summary statistics & department distribution
-├── frontend/                 # Vite + Vue 3 project
+├── backend/                  # Maven Spring Boot Application
+│   └── src/main/java/com/elms/backend/
+│       ├── common/           # Response wrapper, GlobalExceptionHandler, JWT, Config, Seeder
+│       ├── auth/             # AuthController, AuthService, Security, UserDetails
+│       ├── organization/     # Department & Position Management
+│       ├── employee/         # Employee CRUD, Self-referencing Manager, Specification
+│       ├── attendance/       # Daily Check-in/out, Duration, Late Calculation
+│       ├── leave/            # Leave Requests, Balance Deduction, Concurrency Barrier
+│       ├── performance/      # Review Periods, Evaluation Form, Score Aggregation
+│       └── dashboard/        # Role-Scoped Analytics & Chart Data Aggregations
+├── frontend/                 # Vite + Vue 3 Application
 │   └── src/
-│       ├── api/              # Axios instance & domain-specific API calls
-│       ├── components/       # Layouts (Sidebar, Header) & Reusable Base*.vue
-│       ├── stores/           # Pinia modular stores (auth, leave, attendance, etc.)
-│       ├── views/            # Route pages
-│       └── router/           # Route definitions & RBAC guards
-└── docs/                     # PRD, Architecture, Data Model, Tasks
+│       ├── api/              # Domain-specific Axios wrappers
+│       ├── components/       # Layouts & Reusable Base*.vue (BaseTable, BaseChart, etc.)
+│       ├── stores/           # Pinia Stores (auth, leave, attendance, dashboard, etc.)
+│       ├── views/            # Route Pages (Dashboard, Leave, Performance, etc.)
+│       └── router/           # Navigation Guards & RBAC Routes
+└── docs/                     # PRD, Architecture, Data Model, Tasks, & UI Conventions
 ```
 
 ---
@@ -75,133 +119,86 @@ elms/
 |---|:---:|:---:|:---:|
 | Lihat Profil Sendiri | ✅ | ✅ | ✅ |
 | Presensi Harian (Check-in / Check-out) | ✅ | ✅ | ✅ |
-| Pengajuan Cuti Sendiri | ✅ | ✅ | ✅ |
-| Approval / Rejection Cuti Tim | ❌ | ✅ (Hanya direct report) | ✅ (Semua) |
-| CRUD Master Data (Employee, Dept, Pos) | ❌ | ❌ | ✅ |
-| Input Evaluasi Kinerja (Performance Review)| ❌ | ✅ (Hanya direct report) | ❌ |
-| Monitoring Presensi & Dashboard | ❌ | ✅ (Cakupan Tim) | ✅ (Global) |
-
----
-
-## 💼 Business Rules Utama
-
-1. **Self-Referencing Org Hierarchy**:
-   * Setiap karyawan merujuk ke karyawan lain sebagai manajer via relasi `manager_id`. Manajer wajib berstatus `ACTIVE` dan ber-role `MANAGER`.
-2. **Leave Balance Validation**:
-   * Durasi cuti dihitung server-side (Senin–Jumat, mengabaikan weekend).
-   * Cuti tidak boleh *overlap* dengan status `PENDING` atau `APPROVED` lainnya.
-   * Approval cuti memotong saldo secara atomik:
-     $$\text{Sisa Saldo Baru} = \text{Sisa Saldo Lama} - \text{Hari Cuti Disetujui}$$
-3. **Presensi Otomatis**:
-   * Menolak *double check-in* pada hari lokal yang sama (`Asia/Jakarta`).
-   * Menghitung status keterlambatan (`LATE` vs `ON_TIME`) otomatis berdasarkan ambang batas waktu server (`elms.attendance.work-start: 09:00`).
+| Pengajuan Cuti Pribadi | ✅ | ✅ | ✅ |
+| Approval / Rejection Cuti Tim | ❌ | ✅ (Hanya bawahan langsung) | ✅ (Seluruh tim) |
+| Master Data (Departemen, Posisi, Karyawan) | ❌ | ❌ | ✅ |
+| Evaluasi Kinerja Tim (Beri Nilai) | ❌ | ✅ (Hanya bawahan langsung) | ❌ (Read-only) |
+| Dashboard & Visualisasi Grafik | ✅ (Personal) | ✅ (Lingkup Tim) | ✅ (Global Perusahaan) |
 
 ---
 
 ## 🚀 Panduan Instalasi Lokal
 
 ### Prasyarat
-- Java Development Kit (JDK 17 atau 21)
+- Java Development Kit (JDK 21)
 - Node.js (v18+ atau LTS terbaru)
-- PostgreSQL 18 terpasang lokal (Port default: `5432`)
+- PostgreSQL terpasang lokal (Default port: `5432`)
 
-### 1. Konfigurasi Database
-Buat database di instance PostgreSQL lokal Anda:
+### 1. Database
+Buat database lokal pada PostgreSQL:
 ```sql
 CREATE DATABASE elms_db;
 ```
 
-### 2. Konfigurasi Backend
+### 2. Backend Setup
 1. Masuk ke direktori `backend/`:
    ```bash
    cd backend
    ```
-2. Sesuaikan konfigurasi koneksi pada `src/main/resources/application-dev.yml` (atau lewat environment variable):
+2. Sesuaikan kredensial database di `src/main/resources/application-dev.yml`:
    ```yaml
    spring:
      datasource:
        url: jdbc:postgresql://localhost:5432/elms_db
        username: postgres
        password: your_password
-   elms:
-     jwt:
-       secret: "SetMinimal32ByteSecretKeyForHS256AlgorithmSecurityHere!"
-       expiration-ms: 86400000 # 24 Jam
    ```
 3. Jalankan aplikasi Spring Boot:
    ```bash
    ./mvnw spring-boot:run
-   ```
-   *Backend akan berjalan di:* `http://localhost:8080`  
-   *Swagger UI (OpenAPI):* `http://localhost:8080/swagger-ui.html`
+   ```tamb
+   * *API Server:* `http://localhost:8080`
+   * *Swagger UI:* `http://localhost:8080/swagger-ui.html`
 
-### 3. Konfigurasi Frontend
-1. Buka terminal baru dan masuk ke direktori `frontend/`:
+### 3. Frontend Setup
+1. Masuk ke direktori `frontend/`:
    ```bash
    cd frontend
    ```
-2. Buat file `.env` dari `.env.example`:
-   ```bash
-   cp .env.example .env
-   ```
-   Pastikan mengarah ke backend: `VITE_API_BASE_URL=http://localhost:8080/api/v1`
-3. Pasang dependensi dan jalankan server pengembang:
+2. Salin environment variable & pasang dependensi:
    ```bash
    npm install
    npm run dev
    ```
-   *Frontend akan berjalan di:* `http://localhost:5173`
+   * *Aplikasi Web:* `http://localhost:5173`
 
 ---
 
-## 🔑 Kredensial Akun Default (Seeder Profil Dev)
+## 🔑 Kredensial Akun Default (Demo & Development)
 
-Saat aplikasi dijalankan dengan profil `dev`, akun dasar otomatis di-seed untuk mempermudah review:
+Aplikasi dilengkapi dengan **Data Seeder Otomatis** (profil `dev`) yang mengisi data realistis: 10 karyawan di 5 departemen, data kehadiran 7 hari terakhir, pengajuan cuti berbagai status, dan periode review kinerja.
 
-| Role | Email | Password | Deskripsi |
+Semua akun demo menggunakan password default: **`password123`**
+
+| Role | Akun Demo (Email) | Jabatan & Departemen | Wewenang Utama |
 |---|---|---|---|
-| **HR / Admin** | `admin.hr@elms.local` | `Password123!` | Akses penuh master data & dashboard global |
-| **Manager** | `manager.eng@elms.local` | `Password123!` | Manajer tim dengan bawahan langsung |
-| **Employee** | `staff.eng@elms.local` | `Password123!` | Karyawan biasa (bawahan Manager) |
+| **HR / Admin** | `budi.hr@elms.com` | HR Manager (Human Resources) | Kelola seluruh master data, buat periode review, akses metrik global |
+| **Manager** | `siti.manager@elms.com` | Engineering Manager (Engineering) | Approval cuti tim dev, penilaian performa Ahmad, Dewi, & Rizky |
+| **Manager** | `eko.manager@elms.com` | Finance Lead (Finance) | Approval cuti divisi keuangan |
+| **Manager** | `gilang.manager@elms.com` | Marketing Lead (Marketing) | Approval cuti divisi marketing |
+| **Employee** | `ahmad.emp@elms.com` | Sr. Backend Engineer (Engineering) | Presensi, pengajuan cuti (pending), lihat hasil review |
+| **Employee** | `dewi.emp@elms.com` | Frontend Developer (Engineering) | Presensi, pengajuan cuti, lihat hasil review |
+| **Employee** | `fitri.emp@elms.com` | Accountant (Finance) | Contoh karyawan sedang cuti aktif hari ini |
 
 ---
 
-## 📡 Konvensi API & Format Response
+## 🧪 Pengujian Otomatis
 
-Semua endpoint REST mengikuti format envelope standar:
-
-### Success Response (`200 OK`, `201 Created`)
-```json
-{
-  "success": true,
-  "message": "Pengajuan cuti berhasil disetujui",
-  "data": {
-    "id": 102,
-    "status": "APPROVED",
-    "requestedDays": 3,
-    "decidedAt": "2026-09-20T14:30:00Z"
-  }
-}
-```
-
-### Error Response (`400`, `403`, `404`, `409`)
-```json
-{
-  "success": false,
-  "error": {
-    "code": "LEAVE_BALANCE_INSUFFICIENT",
-    "message": "Sisa saldo cuti tidak mencukupi untuk pengajuan ini",
-    "fields": null
-  }
-}
-```
-
----
-
-## 🧪 Testing
-
-Jalankan rangkaian unit & integration test (fokus pada logic validasi leave & status transition):
+Seluruh logika bisnis inti diuji menggunakan unit testing komprehensif:
 ```bash
 cd backend
 ./mvnw test
 ```
+*Hasil: 57 tests passed, 0 failures, 0 errors.*
+
+---
