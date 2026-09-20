@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret:default_jwt_secret_key_for_elms_development_environment_only_12345}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expiration-ms:86400000}")

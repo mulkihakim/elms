@@ -24,13 +24,25 @@ public class CustomUserDetails implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(Employee employee) {
-        this.id = employee.getId();
-        this.email = employee.getEmail();
-        this.password = employee.getPassword();
-        this.fullName = employee.getFullName();
-        this.role = employee.getRole();
-        this.active = employee.getEmploymentStatus() == EmploymentStatus.ACTIVE;
-        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + employee.getRole().name()));
+        if (employee != null) {
+            this.id = employee.getId();
+            this.email = employee.getEmail();
+            this.password = employee.getPassword();
+            this.fullName = employee.getFullName();
+            this.role = employee.getRole();
+            this.active = employee.getEmploymentStatus() == EmploymentStatus.ACTIVE;
+            this.authorities = employee.getRole() != null
+                    ? List.of(new SimpleGrantedAuthority("ROLE_" + employee.getRole().name()))
+                    : List.of();
+        } else {
+            this.id = null;
+            this.email = null;
+            this.password = null;
+            this.fullName = null;
+            this.role = null;
+            this.active = false;
+            this.authorities = List.of();
+        }
     }
 
     @Override

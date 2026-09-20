@@ -33,6 +33,7 @@ public class DataSeeder implements CommandLineRunner {
     private final DepartmentRepository departmentRepository;
     private final PositionRepository positionRepository;
     private final EmployeeRepository employeeRepository;
+    private final com.elms.backend.attendance.AttendanceRepository attendanceRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
@@ -40,6 +41,7 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) {
         seedOrganization();
         seedEmployees();
+        seedAttendances();
     }
 
     private void seedOrganization() {
@@ -206,5 +208,74 @@ public class DataSeeder implements CommandLineRunner {
                 .build());
 
         log.info("✅ {} employees seeded.", employeeRepository.count());
+    }
+
+    private void seedAttendances() {
+        if (attendanceRepository.count() > 0) {
+            log.info("⏭️  Attendance seed skipped — attendances already exist.");
+            return;
+        }
+
+        log.info("🌱 Seeding sample attendance records...");
+
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        Employee budi = employeeRepository.findByEmail("budi.hr@elms.com").orElse(null);
+        Employee siti = employeeRepository.findByEmail("siti.manager@elms.com").orElse(null);
+        Employee ahmad = employeeRepository.findByEmail("ahmad.emp@elms.com").orElse(null);
+        Employee dewi = employeeRepository.findByEmail("dewi.emp@elms.com").orElse(null);
+
+        if (budi == null || siti == null || ahmad == null || dewi == null) {
+            log.warn("⚠️ Cannot seed attendances: Required employees not found.");
+            return;
+        }
+
+        // Budi (HR) - Hari ini hadir on time
+        attendanceRepository.save(com.elms.backend.attendance.Attendance.builder()
+                .employee(budi)
+                .date(today)
+                .checkIn(today.atTime(8, 45, 0))
+                .status(com.elms.backend.attendance.AttendanceStatus.ON_TIME)
+                .notes("Hadir di kantor")
+                .build());
+
+        // Siti (Manager) - Hari ini hadir on time
+        attendanceRepository.save(com.elms.backend.attendance.Attendance.builder()
+                .employee(siti)
+                .date(today)
+                .checkIn(today.atTime(8, 52, 0))
+                .status(com.elms.backend.attendance.AttendanceStatus.ON_TIME)
+                .build());
+
+        // Ahmad (Staff) - Kemarin full day, hari ini terlambat
+        attendanceRepository.save(com.elms.backend.attendance.Attendance.builder()
+                .employee(ahmad)
+                .date(yesterday)
+                .checkIn(yesterday.atTime(8, 55, 0))
+                .checkOut(yesterday.atTime(17, 15, 0))
+                .status(com.elms.backend.attendance.AttendanceStatus.ON_TIME)
+                .workMinutes(500)
+                .build());
+
+        attendanceRepository.save(com.elms.backend.attendance.Attendance.builder()
+                .employee(ahmad)
+                .date(today)
+                .checkIn(today.atTime(9, 18, 0))
+                .status(com.elms.backend.attendance.AttendanceStatus.LATE)
+                .notes("Terjebak macet di jalan")
+                .build());
+
+        // Dewi (Staff) - Kemarin hadir, hari ini belum check in
+        attendanceRepository.save(com.elms.backend.attendance.Attendance.builder()
+                .employee(dewi)
+                .date(yesterday)
+                .checkIn(yesterday.atTime(9, 4, 0))
+                .checkOut(yesterday.atTime(17, 30, 0))
+                .status(com.elms.backend.attendance.AttendanceStatus.LATE)
+                .workMinutes(506)
+                .build());
+
+        log.info("✅ {} attendances seeded.", attendanceRepository.count());
     }
 }

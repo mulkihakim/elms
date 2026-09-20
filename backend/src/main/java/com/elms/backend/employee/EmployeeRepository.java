@@ -18,4 +18,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     Optional<Employee> findByEmail(String email);
 
     List<Employee> findByEmploymentStatus(EmploymentStatus status);
+
+    long countByEmploymentStatus(EmploymentStatus status);
 }

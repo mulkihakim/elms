@@ -58,7 +58,7 @@ const router = createRouter({
         {
           path: 'attendance',
           name: 'attendance',
-          component: () => import('@/views/placeholder/PlaceholderView.vue'),
+          component: () => import('@/views/attendance/AttendanceView.vue'),
         },
         {
           path: 'leaves',
