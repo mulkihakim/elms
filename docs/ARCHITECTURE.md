@@ -199,7 +199,7 @@ elms:
 | Java | 21 (OpenJDK 21.0.12.1) |
 | Spring Boot | 4.1.1 |
 | jjwt | 0.12.6 |
-| springdoc-openapi | 2.8.5 |
+| springdoc-openapi | 3.1.1 |
 | Vue / Vite / Pinia / Vue Router | Vue 3.5.42 / Vite 8.2.2 / Pinia 4.0.3 / Vue Router 5.3.1 |
 | PrimeVue + paket tema | PrimeVue 4.2.1 (`@primevue/themes` 4.2.1) |
 | Tailwind | 4.3.3 |
