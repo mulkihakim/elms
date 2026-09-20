@@ -53,6 +53,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, "LEAVE_OVERLAP", ex.getMessage());
     }
 
+    @ExceptionHandler(ReviewAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleReviewAlreadyExists(ReviewAlreadyExistsException ex) {
+        return buildResponse(HttpStatus.CONFLICT, "REVIEW_ALREADY_EXISTS", ex.getMessage());
+    }
+
     // ── Security Exceptions ──────────────────────────────────────────
 
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)

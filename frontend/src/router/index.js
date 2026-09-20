@@ -78,7 +78,7 @@ const router = createRouter({
         {
           path: 'reviews',
           name: 'reviews',
-          component: () => import('@/views/placeholder/PlaceholderView.vue'),
+          component: () => import('@/views/performance/PerformanceView.vue'),
         },
       ],
     },

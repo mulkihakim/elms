@@ -5,7 +5,7 @@
 > Tag: `[BE]` backend · `[FE]` frontend · `[INFRA]` repo/tooling.
 > Kerjakan berurutan per fase; jangan loncat fase kecuali user meminta.
 
-**Fase aktif:** Fase 6 — Performance Review (Fase 5 Leave Management Selesai)
+**Fase aktif:** Fase 7 — Dashboard (Fase 6 Performance Review Selesai)
 
 ---
 
@@ -71,12 +71,12 @@
 **Selesai bila:** alur PRD § 6.1 langkah 2–4 jalan: request → approve → saldo berkurang; request berikutnya ditolak bila saldo kurang; approve dua kali → 409.
 
 ## Fase 6 — Performance Review
-- [ ] **P6-01** `[BE]` `ReviewPeriod` CRUD-minimal (HR) + `PerformanceReview` entity, unique `(period, employee)`
-- [ ] **P6-02** `[BE]` `PerformanceService.create/update` (hanya manager langsung, skor 1–5, overall dihitung service) + `GET /reviews/me`, `/reviews/team`
-- [ ] **P6-03** `[BE]` Test `PerformanceService` (overall calc, bukan tim → 403, duplikat → 409)
-- [ ] **P6-04** `[FE]` `ReviewPeriodView` (HR, modal form)
-- [ ] **P6-05** `[FE]` `ReviewFormView` (Manager: pilih periode & anggota tim, 4 aspek + komentar)
-- [ ] **P6-06** `[FE]` `MyReviewView` (Employee, read-only)
+- [x] **P6-01** `[BE]` `ReviewPeriod` CRUD-minimal (HR) + `PerformanceReview` entity, unique `(period, employee)`
+- [x] **P6-02** `[BE]` `PerformanceService.create/update` (hanya manager langsung, skor 1–5, overall dihitung service) + `GET /reviews/me`, `/reviews/team`
+- [x] **P6-03** `[BE]` Test `PerformanceService` (overall calc, bukan tim → 403, duplikat → 409)
+- [x] **P6-04** `[FE]` `ReviewPeriodView` (HR, modal form)
+- [x] **P6-05** `[FE]` `ReviewFormView` (Manager: pilih periode & anggota tim, 4 aspek + komentar)
+- [x] **P6-06** `[FE]` `MyReviewView` (Employee, read-only)
 
 **Selesai bila:** PRD § 6.1 langkah 5–6 jalan.
 

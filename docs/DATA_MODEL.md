@@ -84,14 +84,14 @@ Constraint: **unique `(employee_id, date)`** — satu baris per employee per har
 ### 2.7 PerformanceReview
 | Field | Tipe | Catatan |
 |---|---|---|
-| id | bigint | |
-| review_period_id | FK → review_period | |
-| employee_id | FK → employee | yang dinilai |
-| reviewer_id | FK → employee | manager langsung employee tersebut |
+| id | UUID | PK (generate UUID) |
+| review_period_id | FK → review_period | not null |
+| employee_id | FK → employee | yang dinilai, not null |
+| reviewer_id | FK → employee | manager langsung employee tersebut, not null |
 | technical_skill, communication, teamwork, problem_solving | int 1–5 | validasi `@Min(1) @Max(5)` |
 | overall_score | decimal(3,2) | rata-rata 4 aspek, **dihitung di service** |
 | comments | text, nullable | |
-| created_at | timestamp | |
+| created_at / updated_at | timestamp | |
 
 Constraint: **unique `(review_period_id, employee_id)`**.
 
@@ -150,7 +150,7 @@ Saldo cukup · saldo tidak cukup · approve dua kali (409) · reject tidak mengu
 - Hanya manager langsung employee tersebut yang boleh membuat/mengedit review-nya.
 - `overall_score = (technical_skill + communication + teamwork + problem_solving) / 4`, dibulatkan 2 desimal, dihitung di service.
 - Satu review per `(period, employee)`; duplikat → 409 `REVIEW_ALREADY_EXISTS`.
-- Review hanya boleh dibuat/diedit selama hari ini berada dalam rentang periode (⚠ PROPOSED).
+- Review hanya boleh dibuat/diedit selama hari ini berada dalam rentang periode.
 - Employee hanya bisa membaca review miliknya sendiri.
 
 ## 6. Business Rules — Dashboard
