@@ -48,6 +48,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, "LEAVE_BALANCE_INSUFFICIENT", ex.getMessage());
     }
 
+    @ExceptionHandler(LeaveOverlapException.class)
+    public ResponseEntity<ApiResponse<Void>> handleLeaveOverlap(LeaveOverlapException ex) {
+        return buildResponse(HttpStatus.CONFLICT, "LEAVE_OVERLAP", ex.getMessage());
+    }
+
     // ── Security Exceptions ──────────────────────────────────────────
 
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
@@ -103,6 +108,16 @@ public class GlobalExceptionHandler {
         String msg = String.format("Parameter '%s' must be of type %s",
                 ex.getName(), ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown");
         return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", msg);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalState(IllegalStateException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

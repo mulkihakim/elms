@@ -24,4 +24,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     List<Employee> findByEmploymentStatus(EmploymentStatus status);
 
     long countByEmploymentStatus(EmploymentStatus status);
+
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("SELECT e FROM Employee e WHERE e.id = :id")
+    Optional<Employee> findByIdWithLock(@org.springframework.data.repository.query.Param("id") UUID id);
 }

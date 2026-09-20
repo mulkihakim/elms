@@ -73,7 +73,7 @@ const router = createRouter({
         {
           path: 'leaves',
           name: 'leaves',
-          component: () => import('@/views/placeholder/PlaceholderView.vue'),
+          component: () => import('@/views/leave/LeaveView.vue'),
         },
         {
           path: 'reviews',

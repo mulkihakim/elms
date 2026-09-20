@@ -27,3 +27,28 @@ export const ROLE_OPTIONS = [
   { label: 'Manajer (MANAGER)', value: 'MANAGER' },
   { label: 'HR / Administrator (HR)', value: 'HR' },
 ]
+
+export const LEAVE_STATUS = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+}
+
+export const LEAVE_STATUS_OPTIONS = [
+  { label: 'Semua Status', value: null },
+  { label: 'Menunggu Persetujuan (PENDING)', value: 'PENDING' },
+  { label: 'Disetujui (APPROVED)', value: 'APPROVED' },
+  { label: 'Ditolak (REJECTED)', value: 'REJECTED' },
+]
+
+export const LEAVE_TYPE = {
+  ANNUAL: 'ANNUAL',
+  SICK: 'SICK',
+  UNPAID: 'UNPAID',
+}
+
+export const LEAVE_TYPE_OPTIONS = [
+  { label: 'Cuti Tahunan (ANNUAL)', value: 'ANNUAL' },
+  { label: 'Cuti Sakit (SICK)', value: 'SICK' },
+  { label: 'Cuti Tanpa Gaji (UNPAID)', value: 'UNPAID' },
+]

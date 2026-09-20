@@ -4,13 +4,13 @@
 > Jaga tetap ringkas — pangkas entri yang sudah tidak relevan. Detail fitur ada di dokumen lain, bukan di sini.
 
 ## 1. Status Saat Ini
-
+ 
 | | |
 |---|---|
-| Fase aktif | Fase 5 — Leave Management (Persiapan Gate P5-01) |
-| Task terakhir selesai | P4-05 & Sinkronisasi Fase 0–4 |
-| Sedang dikerjakan | Penyelarasan arsitektur/konvensi Fase 0–4 sebelum masuk Fase 5 |
-| Blocker | Open Questions § 3 yang menyangkut Fase 5 (Leave) harus dijawab sebelum P5-01 |
+| Fase aktif | Fase 6 — Performance Review (Fase 5 Leave Management Selesai) |
+| Task terakhir selesai | P5-07 & Penyelesaian Lengkap Modul Leave Management (Fase 5) |
+| Sedang dikerjakan | Persiapan masuk ke Fase 6 (Performance Review) |
+| Blocker | Tidak ada (Fase 5 lulus seluruh 14 test wajib & build frontend sukses) |
 | Terakhir diupdate | 2026-09-20 |
 
 ## 2. Decision Log
@@ -32,6 +32,10 @@
 | 2026-09-20 | Urutan fase: Foundation/Auth → Organization → Employee → ... | Employee butuh Department/Position (FK) dan login butuh entity Employee |
 | 2026-09-20 | Pelanggaran business rule → HTTP 409 | Konsisten dengan kasus status transition |
 | 2026-09-20 | Hybrid ID: `Long` untuk Master Data (`Department`, `Position`), `UUID` untuk Entity Personal & Transaksional (`Employee`, `Attendance`, `LeaveRequest`, `PerformanceReview`) | Master data internal sederhana menggunakan auto-increment, data personal & transaksi terlindungi dari ID enumeration |
+| 2026-09-20 | Hari cuti dihitung hanya Senin–Jumat (skip weekend, tanpa tabel libur nasional di MVP) | MVP fokus alur kerja dasar |
+| 2026-09-20 | Approval cuti: Manager oleh atasannya/HR; HR oleh HR lain; dilarang self-approval (403) | Menjaga integritas tata kelola organisasi |
+| 2026-09-20 | Validasi saldo cuti: cek saat submit (pending belum memotong), cek ulang + lock pessimistic + potong saldo saat approve | Menghindari over-allocation tanpa mengorbankan kuota pending |
+| 2026-09-20 | Validasi tanggal cuti: dilarang backdate (startDate >= today) & overlap dengan PENDING/APPROVED ditolak 409 LEAVE_OVERLAP | Mencegah anomali transaksi jadwal |
 
 ## 3. Open Questions (butuh keputusan user — agent JANGAN asumsi)
 
@@ -39,13 +43,8 @@ Tiap item punya **rekomendasi** (⚠ PROPOSED). Setelah user memutuskan: pindahk
 
 | # | Pertanyaan | Rekomendasi | Dibutuhkan sebelum |
 |---|---|---|---|
-| Q1 | Apakah weekend dihitung sebagai hari cuti? Perlu tabel libur nasional? | Hanya hitung Senin–Jumat; tanpa tabel libur di MVP | P5-01 |
 | Q2 | Jam kerja mulai & toleransi telat? | 09:00 WIB, tanpa grace period, configurable di `elms.attendance.work-start` | P4-01 |
 | Q3 | Saldo cuti awal employee baru? | 12 hari, configurable di `elms.leave.default-balance` | P3-01 |
-| Q4 | Siapa yang memutuskan cuti Manager dan cuti HR? Boleh approve cuti sendiri? | Manager → atasannya (atau HR bila tidak ada); HR → HR lain; **tidak boleh** approve milik sendiri | P5-01 |
-| Q5 | Kapan saldo divalidasi? | Saat submit **dan** dicek ulang saat approve (pending tidak menahan saldo) | P5-01 |
-| Q6 | Cuti overlap dengan request lain (PENDING/APPROVED) ditolak? Boleh backdate? | Overlap ditolak; backdate tidak boleh (`startDate ≥ hari ini`) | P5-01 |
-| Q7 | Tipe ID: `bigint` auto-increment atau UUID? | **Selesai (Hybrid)**: Long untuk master data, UUID untuk employee/attendance/transaksi | Selesai |
 | Q8 | `ON_LEAVE`: di-set otomatis (scheduler) atau dihitung dari data cuti? | Dihitung dari cuti `APPROVED` yang mencakup hari ini; `employment_status` tidak dimutasi otomatis | P7-01 |
 | Q9 | `ABSENT`: disimpan atau dihitung saat laporan? | Dihitung saat laporan (hari kerja tanpa attendance & tanpa cuti approved) | P4-02 |
 | Q10 | Boleh HR melihat semua review (read-only)? Review boleh diedit sampai kapan? | HR baca-saja; edit hanya selama periode berjalan | P6-02 |
@@ -68,8 +67,10 @@ Tiap item punya **rekomendasi** (⚠ PROPOSED). Setelah user memutuskan: pindahk
 - Aura mengikuti dark mode OS secara default — nonaktifkan sesuai `DESIGN.md` § 2 bila tampilan aneh.
 
 ## 6. Session Log (5 terakhir; entri terbaru di atas)
-
+ 
 | Tanggal | Ringkasan | File utama yang berubah |
 |---|---|---|
+| 2026-09-20 | Implementasi lengkap modul Leave Management Fase 5 (P5-01 s/d P5-07): entity, DTO, repo, service dengan pessimistic lock, exception, controller, 14 unit test lolos, UI Vue & Pinia store | `backend/leave/*`, `backend/common/exception/*`, `frontend/src/*`, `docs/*` |
+| 2026-09-20 | Penyusunan Implementation Plan Leave Management (Fase 5 Gate P5-01) & perumusan diskusi Open Questions | `docs/TASKS.md`, `docs/MEMORY.md`, `implementation_plan.md` |
 | 2026-09-20 | Audit & sinkronisasi docs ↔ codebase (Fase 0–4 dicatat selesai, gap diatasi, RULES.md dibuat) | `AGENTS.md`, `docs/*`, `backend/*`, `frontend/*` |
 | 2026-09-20 | Docs dirombak menjadi AGENTS + PRD/ARCHITECTURE/DATA_MODEL/RULES/DESIGN/TASKS/MEMORY | `AGENTS.md`, `docs/*` |

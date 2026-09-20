@@ -50,12 +50,7 @@ const menuSections = computed(() => {
         title: 'Operasional HR',
         items: [
           { name: 'Presensi', path: '/attendance', icon: 'pi pi-calendar-clock', active: true },
-          {
-            name: 'Pengajuan Cuti',
-            path: '/leaves',
-            icon: 'pi pi-calendar-minus',
-            badge: 'Segera',
-          },
+          { name: 'Pengajuan Cuti', path: '/leaves', icon: 'pi pi-calendar-minus', active: true },
           { name: 'Review Kinerja', path: '/reviews', icon: 'pi pi-star', badge: 'Segera' },
         ],
       },
@@ -75,12 +70,7 @@ const menuSections = computed(() => {
         title: 'Manajemen Tim',
         items: [
           { name: 'Presensi Tim', path: '/attendance', icon: 'pi pi-calendar-clock', active: true },
-          {
-            name: 'Persetujuan Cuti',
-            path: '/leaves',
-            icon: 'pi pi-check-circle',
-            badge: 'Segera',
-          },
+          { name: 'Persetujuan Cuti', path: '/leaves', icon: 'pi pi-check-circle', active: true },
           { name: 'Review Kinerja Tim', path: '/reviews', icon: 'pi pi-star', badge: 'Segera' },
         ],
       },
@@ -97,12 +87,7 @@ const menuSections = computed(() => {
       title: 'Aktivitas Saya',
       items: [
         { name: 'Presensi Saya', path: '/attendance', icon: 'pi pi-clock', active: true },
-        {
-          name: 'Pengajuan Cuti Saya',
-          path: '/leaves',
-          icon: 'pi pi-calendar-minus',
-          badge: 'Segera',
-        },
+        { name: 'Pengajuan Cuti Saya', path: '/leaves', icon: 'pi pi-calendar-minus', active: true },
         { name: 'Review Kinerja Saya', path: '/reviews', icon: 'pi pi-star', badge: 'Segera' },
       ],
     },

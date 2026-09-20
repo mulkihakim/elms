@@ -67,7 +67,7 @@ Constraint: **unique `(employee_id, date)`** — satu baris per employee per har
 ### 2.5 LeaveRequest
 | Field | Tipe | Catatan |
 |---|---|---|
-| id | bigint | |
+| id | UUID | PK (generate UUID) |
 | employee_id | FK → employee | pemohon |
 | leave_type | enum | `ANNUAL` saja untuk MVP (enum boleh sudah memuat `SICK`, `UNPAID` untuk masa depan) |
 | start_date, end_date | date | `start ≤ end` |
@@ -102,10 +102,10 @@ Validasi wajib di **service layer** (bukan hanya constraint DB).
 ### 3.1 Submit (`LeaveService.submit`, `@Transactional`)
 ```
 1. startDate <= endDate                                        else 400
-2. startDate >= hari ini (zona Asia/Jakarta)                   else 400   ⚠ PROPOSED (tanpa backdate)
-3. requestedDays = jumlah hari kerja Senin–Jumat di rentang    ⚠ PROPOSED (weekend tidak dihitung; tanpa tabel libur nasional)
+2. startDate >= hari ini (zona Asia/Jakarta)                   else 400 (tanpa backdate)
+3. requestedDays = jumlah hari kerja Senin–Jumat di rentang    (weekend tidak dihitung; tanpa tabel libur nasional)
 4. requestedDays > 0                                           else 400
-5. tidak overlap dengan LeaveRequest PENDING/APPROVED milik employee yang sama   else 409 LEAVE_OVERLAP   ⚠ PROPOSED
+5. tidak overlap dengan LeaveRequest PENDING/APPROVED milik employee yang sama   else 409 LEAVE_OVERLAP
 6. requestedDays <= employee.leaveBalance                      else 409 LEAVE_BALANCE_INSUFFICIENT
 7. simpan status = PENDING (saldo BELUM berkurang)
 ```
@@ -117,7 +117,7 @@ Validasi wajib di **service layer** (bukan hanya constraint DB).
    pemutus ≠ pemohon (tidak boleh approve cuti sendiri)        else 403
 3. status harus PENDING                                        else 409 INVALID_STATUS_TRANSITION
 4. approve:
-     a. kunci baris employee pemohon (PESSIMISTIC_WRITE atau @Version) — cegah dua approval bersamaan melewati saldo
+     a. kunci baris employee pemohon (PESSIMISTIC_WRITE) — cegah dua approval bersamaan melewati saldo
      b. cek ulang requestedDays <= leaveBalance                else 409 LEAVE_BALANCE_INSUFFICIENT
      c. leaveBalance -= requestedDays
    reject: saldo tidak berubah
@@ -127,7 +127,7 @@ Validasi wajib di **service layer** (bukan hanya constraint DB).
 Kenapa cek saldo dua kali: cuti `PENDING` tidak "menahan" saldo, jadi dua request yang masing-masing lolos saat submit
 bisa sama-sama melewati saldo kalau keduanya di-approve. Cek ulang saat approve menutup celah ini.
 
-### 3.3 Siapa pemutus?  ⚠ PROPOSED
+### 3.3 Siapa pemutus?
 - Employee biasa → manager langsung (`manager_id`) atau HR.
 - Manager → manager di atasnya bila ada, jika tidak → HR.
 - HR → HR lain (bukan dirinya).

@@ -5,7 +5,7 @@
 > Tag: `[BE]` backend · `[FE]` frontend · `[INFRA]` repo/tooling.
 > Kerjakan berurutan per fase; jangan loncat fase kecuali user meminta.
 
-**Fase aktif:** Fase 5 (Persiapan Gate P5-01)
+**Fase aktif:** Fase 6 — Performance Review (Fase 5 Leave Management Selesai)
 
 ---
 
@@ -60,13 +60,13 @@
 **Selesai bila:** double check-in ditolak; status LATE/ON_TIME sesuai config; manager hanya melihat timnya.
 
 ## Fase 5 — Leave Management ⭐
-- [ ] **P5-01** 🛑 `[BE]` **Rancangan Leave** — walk-through `DATA_MODEL.md` § 3 (submit, decide, locking, siapa pemutus); **selesaikan Open Questions terkait di `MEMORY.md` dulu**; tunggu konfirmasi
-- [ ] **P5-02** `[BE]` `LeaveRequest` entity + repository + DTO + `InsufficientLeaveBalanceException`, `LEAVE_OVERLAP`
-- [ ] **P5-03** 🛑 `[BE]` `LeaveService.submit` (validasi § 3.1) + `POST /leave-requests`, `GET /leave-requests/me`
-- [ ] **P5-04** 🛑 `[BE]` `LeaveService.approve/reject` (`@Transactional`, otorisasi, locking, cek ulang saldo) + endpoint + `GET /leave-requests/team`
-- [ ] **P5-05** `[BE]` **`LeaveServiceTest`** — semua kasus di `DATA_MODEL.md` § 3.4 (wajib)
-- [ ] **P5-06** `[FE]` `LeaveRequestView`: form ajukan (date range, alasan; tampilkan saldo & estimasi hari) + riwayat pribadi dengan `StatusBadge`
-- [ ] **P5-07** `[FE]` `LeaveApprovalView` (Manager/HR): daftar tim, tombol approve/reject dengan konfirmasi, refresh saldo
+- [x] **P5-01** 🛑 `[BE]` **Rancangan Leave** — walk-through `DATA_MODEL.md` § 3 (submit, decide, locking, siapa pemutus); **selesaikan Open Questions terkait di `MEMORY.md` dulu**; tunggu konfirmasi
+- [x] **P5-02** `[BE]` `LeaveRequest` entity + repository + DTO + `InsufficientLeaveBalanceException`, `LEAVE_OVERLAP`
+- [x] **P5-03** 🛑 `[BE]` `LeaveService.submit` (validasi § 3.1) + `POST /leave-requests`, `GET /leave-requests/me`
+- [x] **P5-04** 🛑 `[BE]` `LeaveService.approve/reject` (`@Transactional`, otorisasi, locking, cek ulang saldo) + endpoint + `GET /leave-requests/team`
+- [x] **P5-05** `[BE]` **`LeaveServiceTest`** — semua kasus di `DATA_MODEL.md` § 3.4 (wajib)
+- [x] **P5-06** `[FE]` `LeaveRequestView`: form ajukan (date range, alasan; tampilkan saldo & estimasi hari) + riwayat pribadi dengan `StatusBadge`
+- [x] **P5-07** `[FE]` `LeaveApprovalView` (Manager/HR): daftar tim, tombol approve/reject dengan konfirmasi, refresh saldo
 
 **Selesai bila:** alur PRD § 6.1 langkah 2–4 jalan: request → approve → saldo berkurang; request berikutnya ditolak bila saldo kurang; approve dua kali → 409.
 
