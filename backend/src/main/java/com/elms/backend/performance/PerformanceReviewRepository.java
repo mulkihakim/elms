@@ -13,4 +13,6 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
     boolean existsByReviewPeriodIdAndEmployeeId(Long reviewPeriodId, UUID employeeId);
 
     Optional<PerformanceReview> findByReviewPeriodIdAndEmployeeId(Long reviewPeriodId, UUID employeeId);
+
+    Optional<PerformanceReview> findFirstByEmployeeIdOrderByCreatedAtDesc(UUID employeeId);
 }

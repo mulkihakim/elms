@@ -25,4 +25,22 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, UUID
     );
 
     long countByStatus(LeaveStatus status);
+
+    @Query("SELECT COUNT(DISTINCT l.employee.id) FROM LeaveRequest l " +
+           "WHERE l.status = com.elms.backend.leave.LeaveStatus.APPROVED " +
+           "AND :date BETWEEN l.startDate AND l.endDate")
+    long countOnLeaveByDate(@Param("date") LocalDate date);
+
+    @Query("SELECT COUNT(DISTINCT l.employee.id) FROM LeaveRequest l " +
+           "WHERE l.employee.manager.id = :managerId " +
+           "AND l.status = com.elms.backend.leave.LeaveStatus.APPROVED " +
+           "AND :date BETWEEN l.startDate AND l.endDate")
+    long countTeamOnLeaveByDate(@Param("managerId") UUID managerId, @Param("date") LocalDate date);
+
+    @Query("SELECT COUNT(l) FROM LeaveRequest l " +
+           "WHERE l.employee.manager.id = :managerId " +
+           "AND l.status = com.elms.backend.leave.LeaveStatus.PENDING")
+    long countTeamPendingLeaveRequests(@Param("managerId") UUID managerId);
+
+    java.util.Optional<LeaveRequest> findFirstByEmployeeIdOrderByCreatedAtDesc(UUID employeeId);
 }
